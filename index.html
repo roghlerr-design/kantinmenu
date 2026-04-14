@@ -999,7 +999,7 @@ async function loadSaucesFromDB() {
     const { data, error } = await supabase
         .from("sauces")
         .select("*")
-        .order("created_at", { ascending: true });
+      
 
     if (error) {
         console.error("SOS DB HATA:", error);
