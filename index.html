@@ -690,17 +690,17 @@
     position: sticky;
     top: 78px;
     z-index: 49;
+            
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
     padding: 10px 15px 0 15px;
     margin: 0 -15px 20px -15px;
     background: transparent;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
-        .top-buttons {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
+     
     </style>
 </head>
 <body>
@@ -754,7 +754,7 @@
 </div>
 
 <div class="container hidden-view" id="productsView">
-     <div class="top-buttons
+     <div class="top-buttons">
         <button class="back-btn" id="backToCategoriesBtn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
