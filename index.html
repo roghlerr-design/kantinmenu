@@ -970,9 +970,8 @@ async function loadProductsFromDB() {
         .order("created_at", { ascending: true });
 
     const { data: dbOptions, error: oError } = await supabase
-        .from("product_options")
-        .select("*")
-        .order("created_at", { ascending: true });
+    .from("product_options")
+    .select("*");
 
     if (pError || oError) {
         console.error("ÜRÜN DB HATA:", pError || oError);
