@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Özserap Kantin Plus+ Menü</title>
+    <link rel="icon" type="image/x-icon" href="icon.png" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1e293b;
+            position: relative;
+            overflow-x: hidden;
+            background: #e0f2fe;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            transition: background 0.5s ease;
+        }
+
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: #34d399;
+            top: -100px;
+            left: -100px;
+        }
+
+        body::after {
+            width: 500px;
+            height: 500px;
+            background: #38bdf8;
+            bottom: -150px;
+            right: -150px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            transition: all 0.5s ease;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .logo {
+            max-height: 50px;
+            cursor: pointer;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #065f46;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.5);
+        }
+
+        header p {
+            margin: 0;
+            color: #475569;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .theme-toggle-btn {
+            position: absolute;
+            top: 0;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .admin-controls {
+            display: none;
+            width: 100%;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .btn-add-new, .btn-logout {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-add-new {
+            background: rgba(16, 185, 129, 0.8);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-add-new:hover {
+            background: rgba(16, 185, 129, 1);
+            transform: translateY(-2px);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 1);
+            transform: translateY(-2px);
+        }
+
+        body.admin-mode .admin-controls {
+            display: flex;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto 40px auto;
+            padding: 0 15px;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 30px 15px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.1);
+        }
+
+        .category-card .icon {
+            font-size: 3rem;
+        }
+
+        .category-card h3 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .hidden-view {
+            display: none !important;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255,255,255,0.8);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            color: #0f172a;
+            transform: translateX(-3px);
+        }
+
+        .current-category-title {
+            font-size: 1.5rem;
+            color: #0f172a;
+            margin: 0 0 20px 0;
+            border-bottom: 2px solid rgba(16, 185, 129, 0.3);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .menu-item {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.1);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: linear-gradient(to bottom, #10b981, #38bdf8);
+            border-radius: 20px 0 0 20px;
+        }
+
+        .item-img-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            background-color: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 70%;
+            transition: transform 0.4s ease;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .item-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .item-price {
+            background: rgba(255, 255, 255, 0.7);
+            color: #059669;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .item-desc {
+            font-size: 0.85rem;
+            color: #475569;
+            margin: 0;
+            line-height: 1.6;
+            flex-grow: 1;
+            font-weight: 500;
+        }
+
+        .opt-desc-text {
+            margin-top: -5px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
+
+        .main-desc-text {
+            margin-top: 10px;
+        }
+
+        .item-admin-actions {
+            display: none;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        body.admin-mode .item-admin-actions {
+            display: flex;
+        }
+
+        .edit-btn, .delete-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .edit-btn {
+            background: rgba(14, 165, 233, 0.15);
+            color: #0284c7;
+        }
+
+        .edit-btn:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .admin-content {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.8);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .admin-content h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .admin-form-group {
+            margin-bottom: 15px;
+        }
+
+        .admin-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+
+        .admin-form-group input[type="text"],
+        .admin-form-group textarea,
+        .admin-form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .admin-form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .admin-form-group input:focus,
+        .admin-form-group textarea:focus,
+        .admin-form-group select:focus {
+            background: rgba(255,255,255,0.8);
+            border-color: #10b981;
+        }
+
+        .admin-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .close-btn {
+            background: rgba(100, 116, 139, 0.2);
+            color: #334155;
+        }
+
+        .option-row {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px dashed rgba(16, 185, 129, 0.4);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-row-top {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .option-row input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.5);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .remove-opt-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 10px 12px;
+            font-weight: bold;
+        }
+
+        .footer-container {
+            text-align: center;
+            padding: 20px 15px 40px 15px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .footer-signature {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            padding: 8px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .footer-signature span {
+            color: #059669;
+            font-weight: 700;
+        }
+
+        @media (min-width: 768px) {
+            .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .category-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+            .header-content { flex-direction: row; justify-content: space-between; padding: 0 20px; }
+            .logo-area { flex-direction: row; }
+            header h1 { font-size: 2rem; }
+            .theme-toggle-btn { position: relative; top: 0; right: 0; }
+            .admin-controls { width: auto; justify-content: flex-end; margin-top: 0; }
+        }
+
+        @media (min-width: 1024px) {
+            .menu-grid, .category-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        body.dark-mode {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        body.dark-mode::before { background: #064e3b; }
+        body.dark-mode::after { background: #0c4a6e; }
+
+        body.dark-mode header {
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode header h1 {
+            color: #34d399;
+            text-shadow: 0 2px 10px rgba(52, 211, 153, 0.2);
+        }
+
+        body.dark-mode header p { color: #94a3b8; }
+
+        body.dark-mode .theme-toggle-btn {
+            background: rgba(15, 23, 42, 0.5);
+            border-color: rgba(255,255,255,0.2);
+            color: #f8fafc;
+        }
+
+        body.dark-mode .theme-toggle-btn:hover {
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        body.dark-mode .category-card {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .category-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        body.dark-mode .category-card h3 { color: #f8fafc; }
+
+        body.dark-mode .back-btn {
+            background: rgba(30, 41, 59, 0.85);
+            color: #f8fafc;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .current-category-title {
+            color: #f8fafc;
+            border-bottom-color: rgba(52, 211, 153, 0.3);
+        }
+
+        body.dark-mode .menu-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .menu-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        body.dark-mode .item-title { color: #f8fafc; }
+        body.dark-mode .item-price {
+            background: rgba(15, 23, 42, 0.8);
+            color: #34d399;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .item-desc { color: #94a3b8; }
+
+        body.dark-mode .item-img-container {
+            background-color: rgba(15, 23, 42, 0.5);
+        }
+
+        body.dark-mode .footer-signature {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(255,255,255,0.1);
+            color: #94a3b8;
+        }
+
+        body.dark-mode .admin-content {
+            background: rgba(15, 23, 42, 0.85);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .admin-content h2 { color: #f8fafc; }
+        body.dark-mode .admin-form-group label { color: #94a3b8; }
+
+        body.dark-mode .admin-form-group input[type="text"],
+        body.dark-mode .admin-form-group textarea,
+        body.dark-mode .admin-form-group select,
+        body.dark-mode .option-row input[type="text"] {
+            background: rgba(30, 41, 59, 0.8);
+            color: #f8fafc;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="logo.png" alt="Özserap Logo" class="logo" id="logoImg" title="Yönetici girişi" loading="lazy">
+            <div class="brand-text">
+                <h1>Özserap Kantin Plus+</h1>
+                <p>Kantin & Kafe & Restaurant</p>
+            </div>
+        </div>
+
+        <button id="themeToggle" class="theme-toggle-btn" title="Temayı Değiştir">🌙</button>
+
+        <div class="admin-controls">
+            <button class="btn-add-new" id="openAddModalBtn">+ Yeni Ürün</button>
+            <button class="btn-logout" id="logoutBtn">Çıkış Yap</button>
+        </div>
+    </div>
+</header>
+
+<div class="container" id="categoryView">
+    <div class="category-grid">
+        <div class="category-card" data-category="doyuran" data-title="Doyuran Lezzetler">
+            <div class="icon">🍔</div>
+            <h3>Doyuran Lezzetler</h3>
+        </div>
+        <div class="category-card" data-category="sicak" data-title="Sıcak İçecekler">
+            <div class="icon">☕</div>
+            <h3>Sıcak İçecekler</h3>
+        </div>
+        <div class="category-card" data-category="soguk" data-title="Soğuk İçecekler">
+    <div class="icon">🥤</div>
+    <h3>Soğuk İçecekler</h3>
+</div>
+        <div class="category-card" data-category="pizza" data-title="Pizzalar">
+            <div class="icon">🍕</div>
+            <h3>Pizzalar</h3>
+        </div>
+        <div class="category-card" data-category="kahve" data-title="Yeni Nesil Kahve">
+            <div class="icon">☕</div>
+            <h3>Yeni Nesil Kahve</h3>
+        </div>
+        <div class="category-card" data-category="kahvalti" data-title="Kahvaltılıklar">
+            <div class="icon">🍳</div>
+            <h3>Kahvaltılıklar</h3>
+        </div>
+    </div>
+</div>
+
+<div class="container hidden-view" id="productsView">
+    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+        <button class="back-btn" id="backToCategoriesBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Kategorilere Dön
+        </button>
+
+        <button class="back-btn" id="openSauceBtn" style="background: rgba(16, 185, 129, 0.15); color: #059669; border-color: rgba(16, 185, 129, 0.3);">
+            ✨ Sos Seçenekleri
+        </button>
+    </div>
+
+    <h2 class="current-category-title" id="currentCategoryTitle">Kategori Adı</h2>
+    <div class="menu-grid" id="menuGrid"></div>
+</div>
+
+<div class="footer-container">
+    <div class="footer-signature">
+        Made by <span>Oğuzhan Yavaş</span> <span>/Arda Utancak</span>
+    </div>
+</div>
+
+<div class="admin-modal" id="adminModal">
+    <div class="admin-content">
+        <h2 id="adminModalTitle">Yeni Ürün Ekle</h2>
+
+        <div class="admin-form-group">
+            <label>Kategori</label>
+            <select id="newCategory">
+                <option value="doyuran">Doyuran Lezzetler</option>
+                <option value="sicak">Sıcak İçecekler</option>
+                <option value="soguk">Soğuk İçecekler</option>
+                <option value="pizza">Pizzalar</option>
+                <option value="kahve">Yeni Nesil Kahve</option>
+                <option value="kahvalti">Kahvaltılıklar</option>
+            </select>
+        </div>
+
+        <div class="admin-form-group">
+            <label>Ürün Görseli Linki</label>
+            <input type="text" id="newImage" placeholder="Örn: burger.png veya https://...">
+        </div>
+
+        <div class="admin-form-group" id="dynamicOptionsGroup">
+            <label style="display:flex; justify-content:space-between; align-items:center;">
+                Ürün Seçenekleri
+                <button type="button" id="addOptionBtn" style="background:#10b981; color:white; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.75rem; font-weight:600;">
+                    + Seçenek Ekle
+                </button>
+            </label>
+            <div id="optionsContainer"></div>
+        </div>
+
+        <div class="admin-form-group">
+            <label>Ürün Genel İçeriği / Açıklama</label>
+            <textarea id="newDesc" placeholder="Örn: Gurme susamlı ekmek, dana köfte, cheddar..."></textarea>
+        </div>
+
+        <button class="admin-btn" id="saveProductBtn">Kaydet</button>
+        <button class="admin-btn close-btn" id="closeAdminBtn">Vazgeç</button>
+    </div>
+</div>
+
+<div class="admin-modal" id="sauceModal">
+    <div class="admin-content" style="max-width: 400px;">
+        <h2 style="color: #059669; border-bottom: 2px solid #10b981; padding-bottom: 10px; margin-bottom: 20px;">
+            Sos Menüsü
+        </h2>
+        <div id="sauceListContainer"></div>
+        <button class="admin-btn close-btn" id="closeSauceBtn" style="margin-top: 20px;">Kapat</button>
+    </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const supabaseUrl = "https://gojphwhnmvmkpawriofu.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvanBod2hubXZta3Bhd3Jpb2Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIyNjQsImV4cCI6MjA5MTY3ODI2NH0.5PgZKZjOaWbZfIZdDIGMNyw4mhj2-3SwjsJMVWaLSjg";
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const ADMIN_PASSWORD = "admin123";
+
+const defaultSauces = [
+    { name: "🍅 Ketçap", price: "+5 TL" },
+    { name: "🥚 Mayonez", price: "+5 TL" },
+    { name: "🧄 Ranch Sos", price: "+10 TL" },
+    { name: "🥪 Burger Sos", price: "+7 TL" },
+    { name: "🧀 Cheddar Sos", price: "+10 TL" }
+];
+
+let products = [];
+let currentCategory = "";
+let editingProductId = null;
+
+const body = document.body;
+const themeToggleBtn = document.getElementById("themeToggle");
+const logoImg = document.getElementById("logoImg");
+const openAddModalBtn = document.getElementById("openAddModalBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const adminModal = document.getElementById("adminModal");
+const adminModalTitle = document.getElementById("adminModalTitle");
+const saveProductBtn = document.getElementById("saveProductBtn");
+const closeAdminBtn = document.getElementById("closeAdminBtn");
+const optionsContainer = document.getElementById("optionsContainer");
+const addOptionBtn = document.getElementById("addOptionBtn");
+const categoryView = document.getElementById("categoryView");
+const productsView = document.getElementById("productsView");
+const backToCategoriesBtn = document.getElementById("backToCategoriesBtn");
+const currentCategoryTitle = document.getElementById("currentCategoryTitle");
+const menuGrid = document.getElementById("menuGrid");
+const categoryCards = document.querySelectorAll(".category-card");
+const sauceModal = document.getElementById("sauceModal");
+const openSauceBtn = document.getElementById("openSauceBtn");
+const closeSauceBtn = document.getElementById("closeSauceBtn");
+const sauceListContainer = document.getElementById("sauceListContainer");
+
+function generateId() {
+    return "id_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+}
+
+function escapeHtml(text) {
+    return String(text || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function addOptionRow(nameVal = "", priceVal = "", descVal = "") {
+    const row = document.createElement("div");
+    row.className = "option-row";
+
+    row.innerHTML = `
+        <div class="option-row-top">
+            <input type="text" class="opt-name" placeholder="Ürün adı" value="${escapeHtml(nameVal)}" style="flex:2;">
+            <input type="text" class="opt-price" placeholder="Fiyat" value="${escapeHtml(priceVal)}" style="flex:1;">
+            <button type="button" class="remove-opt-btn">X</button>
+        </div>
+        <input type="text" class="opt-desc" placeholder="Bu seçeneğe özel açıklama (isteğe bağlı)" value="${escapeHtml(descVal)}">
+    `;
+
+    row.querySelector(".remove-opt-btn").addEventListener("click", () => {
+        if (optionsContainer.children.length > 1) {
+            row.remove();
+        } else {
+            alert("En az bir seçenek kalmalı.");
+        }
+    });
+
+    optionsContainer.appendChild(row);
+}
+
+function resetModal() {
+    editingProductId = null;
+    adminModalTitle.textContent = "Yeni Ürün Ekle";
+    saveProductBtn.textContent = "Kaydet";
+    document.getElementById("newCategory").value = "doyuran";
+    document.getElementById("newImage").value = "";
+    document.getElementById("newDesc").value = "";
+    optionsContainer.innerHTML = "";
+    addOptionRow("", "", "");
+}
+
+function openAddModal() {
+    resetModal();
+    adminModal.style.display = "flex";
+}
+
+function closeModal() {
+    adminModal.style.display = "none";
+}
+
+function getCategoryTitle(category) {
+    const map = {
+        doyuran: "Doyuran Lezzetler",
+        sicak: "Sıcak İçecekler",
+        soguk: "Soğuk İçecekler",
+        pizza: "Pizzalar",
+        kahve: "Yeni Nesil Kahve",
+        kahvalti: "Kahvaltılıklar"
+    };
+    return map[category] || "Kategori";
+}
+
+function renderSauces() {
+    sauceListContainer.innerHTML = "";
+
+    defaultSauces.forEach(sauce => {
+        const div = document.createElement("div");
+        div.className = "menu-item";
+        div.style.padding = "14px";
+        div.style.marginBottom = "10px";
+
+        div.innerHTML = `
+            <div class="item-header" style="margin-bottom:0;">
+                <h3 class="item-title" style="font-size:1rem;">${escapeHtml(sauce.name)}</h3>
+                <span class="item-price">${escapeHtml(sauce.price)}</span>
+            </div>
+        `;
+
+        sauceListContainer.appendChild(div);
+    });
+}
+
+async function loadProductsFromDB() {
+    const { data: dbProducts, error: pError } = await supabase
+        .from("products")
+        .select("*");
+
+    const { data: dbOptions, error: oError } = await supabase
+        .from("product_options")
+        .select("*");
+
+    console.log("VERİ:", dbProducts);
+    console.log("HATA:", pError || oError || null);
+
+    if (pError || oError) {
+        console.error("DB HATA:", pError || oError);
+        products = [];
+        return;
+    }
+
+    products = (dbProducts || []).map(p => ({
+        id: p.id,
+        category: p.category,
+        image: p.image || "",
+        desc: p.description || "",
+        options: (dbOptions || [])
+            .filter(o => o.product_id === p.id)
+            .map(o => ({
+                name: o.name || "",
+                price: o.price || "",
+                desc: o.description || ""
+            }))
+    }));
+}
+
+function renderCategories() {
+    categoryView.classList.remove("hidden-view");
+    productsView.classList.add("hidden-view");
+}
+
+function renderProducts(category) {
+    currentCategory = category;
+    currentCategoryTitle.textContent = getCategoryTitle(category);
+    menuGrid.innerHTML = "";
+
+    const filtered = products.filter(p => p.category === category);
+
+    filtered.forEach(product => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "menu-item";
+
+        const imageSrc = product.image && product.image.trim() !== "" ? product.image : "urun-gorseli.jpg";
+
+        let optionsHtml = "";
+        product.options.forEach(opt => {
+            optionsHtml += `
+                <div class="item-header">
+                    <h3 class="item-title">${escapeHtml(opt.name)}</h3>
+                    <span class="item-price">${escapeHtml(opt.price)}</span>
+                </div>
+                ${opt.desc ? `<p class="item-desc opt-desc-text">${escapeHtml(opt.desc)}</p>` : ""}
+            `;
+        });
+
+        itemDiv.innerHTML = `
+            <div class="item-img-container">
+                <img src="${escapeHtml(imageSrc)}" class="item-img" alt="${escapeHtml(product.options[0]?.name || "Ürün")}" loading="lazy"
+                     onerror="this.src='urun-gorseli.jpg'">
+            </div>
+            ${optionsHtml}
+            ${product.desc ? `<p class="item-desc main-desc-text">${escapeHtml(product.desc)}</p>` : ""}
+            <div class="item-admin-actions">
+                <button class="edit-btn">✏️ Düzenle</button>
+                <button class="delete-btn">🗑️ Sil</button>
+            </div>
+        `;
+
+        const editBtn = itemDiv.querySelector(".edit-btn");
+        const deleteBtn = itemDiv.querySelector(".delete-btn");
+
+        editBtn.addEventListener("click", () => openEditModal(product.id));
+        deleteBtn.addEventListener("click", () => deleteProduct(product.id));
+
+        menuGrid.appendChild(itemDiv);
+    });
+
+    categoryView.classList.add("hidden-view");
+    productsView.classList.remove("hidden-view");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openEditModal(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    editingProductId = productId;
+    adminModalTitle.textContent = "Ürünü Güncelle";
+    saveProductBtn.textContent = "Güncelle";
+
+    document.getElementById("newCategory").value = product.category;
+    document.getElementById("newImage").value = product.image || "";
+    document.getElementById("newDesc").value = product.desc || "";
+
+    optionsContainer.innerHTML = "";
+    if (product.options.length > 0) {
+        product.options.forEach(opt => addOptionRow(opt.name, opt.price, opt.desc || ""));
+    } else {
+        addOptionRow("", "", "");
+    }
+
+    adminModal.style.display = "flex";
+}
+
+function deleteProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const productName = product.options?.[0]?.name || "Bu ürün";
+    const confirmed = confirm(`"${productName}" adlı ürünü silmek istediğine emin misin?`);
+    if (!confirmed) return;
+
+    products = products.filter(p => p.id !== productId);
+    if (currentCategory) renderProducts(currentCategory);
+}
+
+function collectFormData() {
+    const category = document.getElementById("newCategory").value;
+    const image = document.getElementById("newImage").value.trim();
+    const desc = document.getElementById("newDesc").value.trim();
+
+    const optionRows = document.querySelectorAll(".option-row");
+    const options = [];
+
+    optionRows.forEach(row => {
+        const name = row.querySelector(".opt-name").value.trim();
+        const price = row.querySelector(".opt-price").value.trim();
+        const optDesc = row.querySelector(".opt-desc").value.trim();
+
+        if (name !== "" && price !== "") {
+            options.push({
+                name,
+                price,
+                desc: optDesc
+            });
+        }
+    });
+
+    if (options.length === 0) {
+        alert("En az bir ürün adı ve fiyat girmelisin.");
+        return null;
+    }
+
+    return { category, image, desc, options };
+}
+
+function saveOrUpdateProduct() {
+    const formData = collectFormData();
+    if (!formData) return;
+
+    if (editingProductId) {
+        const index = products.findIndex(p => p.id === editingProductId);
+        if (index !== -1) {
+            products[index] = {
+                ...products[index],
+                ...formData
+            };
+        }
+    } else {
+        products.push({
+            id: generateId(),
+            ...formData
+        });
+    }
+
+    closeModal();
+    if (currentCategory) renderProducts(currentCategory);
+}
+
+categoryCards.forEach(card => {
+    card.addEventListener("click", () => {
+        const selectedCategory = card.getAttribute("data-category");
+        renderProducts(selectedCategory);
+    });
+});
+
+backToCategoriesBtn.addEventListener("click", () => {
+    renderCategories();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+openSauceBtn.addEventListener("click", () => {
+    renderSauces();
+    sauceModal.style.display = "flex";
+});
+
+closeSauceBtn.addEventListener("click", () => {
+    sauceModal.style.display = "none";
+});
+
+logoImg.addEventListener("click", () => {
+    const password = prompt("Yönetici şifresini gir:");
+    if (password === null) return;
+
+    if (password === ADMIN_PASSWORD) {
+        body.classList.add("admin-mode");
+        alert("Yönetici girişi başarılı.");
+    } else {
+        alert("Şifre yanlış.");
+    }
+});
+
+logoutBtn.addEventListener("click", () => {
+    body.classList.remove("admin-mode");
+    alert("Yönetici modundan çıkış yapıldı.");
+});
+
+openAddModalBtn.addEventListener("click", openAddModal);
+closeAdminBtn.addEventListener("click", closeModal);
+addOptionBtn.addEventListener("click", () => addOptionRow("", "", ""));
+saveProductBtn.addEventListener("click", saveOrUpdateProduct);
+
+window.addEventListener("click", (e) => {
+    if (e.target === adminModal) closeModal();
+    if (e.target === sauceModal) sauceModal.style.display = "none";
+});
+
+if (localStorage.getItem("theme") === "dark") {
+    body.classList.add("dark-mode");
+    themeToggleBtn.innerText = "☀️";
+}
+
+themeToggleBtn.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
+
+    if (body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+        themeToggleBtn.innerText = "☀️";
+    } else {
+        localStorage.setItem("theme", "light");
+        themeToggleBtn.innerText = "🌙";
+    }
+});
+
+await loadProductsFromDB();
+renderCategories();
+</script>
+
+</body>
+</html>
