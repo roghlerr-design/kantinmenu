@@ -765,7 +765,10 @@
 
         <button class="back-btn" id="openSauceBtn" style="background: rgba(16, 185, 129, 0.15); color: #059669; border-color: rgba(16, 185, 129, 0.3);">
             ✨ Sos Seçenekleri
-        </button>
+        </button
+            <button class="back-btn hidden-view" id="openSnackBtn" style="background: rgba(245, 158, 11, 0.15); color: #d97706; border-color: rgba(245, 158, 11, 0.3);">
+    🍪 Atıştırmalıklar
+</button>
     </div>
 
     <h2 class="current-category-title" id="currentCategoryTitle">Kategori Adı</h2>
@@ -828,7 +831,15 @@
         <button class="admin-btn close-btn" id="closeSauceBtn" style="margin-top: 20px;">Kapat</button>
     </div>
 </div>
-
+<div class="admin-modal" id="snackModal">
+    <div class="admin-content" style="max-width: 400px;">
+        <h2 style="color: #d97706; border-bottom: 2px solid #f59e0b; padding-bottom: 10px; margin-bottom: 20px;">
+            Atıştırmalıklar
+        </h2>
+        <div id="snackListContainer"></div>
+        <button class="admin-btn close-btn" id="closeSnackBtn" style="margin-top: 20px;">Kapat</button>
+    </div>
+</div>
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -870,7 +881,12 @@ const categoryCards = document.querySelectorAll(".category-card");
 const sauceModal = document.getElementById("sauceModal");
 const openSauceBtn = document.getElementById("openSauceBtn");
 const closeSauceBtn = document.getElementById("closeSauceBtn");
-const sauceListContainer = document.getElementById("sauceListContainer");
+const sauceListContainer = document.getElementById("sauceListContainer"); const snackModal = document.getElementById("snackModal");
+const openSnackBtn = document.getElementById("openSnackBtn");
+const closeSnackBtn = document.getElementById("closeSnackBtn");
+const snackListContainer = document.getElementById("snackListContainer");
+
+let snacks = [];
 
 function generateId() {
     return "id_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
@@ -960,7 +976,26 @@ function renderSauces() {
         sauceListContainer.appendChild(div);
     });
 }
+function renderSnacks() {
+    snackListContainer.innerHTML = "";
 
+    snacks.forEach(snack => {
+        const div = document.createElement("div");
+        div.className = "menu-item";
+        div.style.padding = "14px";
+        div.style.marginBottom = "10px";
+
+        div.innerHTML = `
+            <div class="item-header" style="margin-bottom:0;">
+                <h3 class="item-title" style="font-size:1rem;">${escapeHtml(snack.name)}</h3>
+                <span class="item-price">${escapeHtml(snack.price)}</span>
+            </div>
+            ${snack.description ? `<p class="item-desc" style="margin-top:8px;">${escapeHtml(snack.description)}</p>` : ""}
+        `;
+
+        snackListContainer.appendChild(div);
+    });
+}
 async function loadProductsFromDB() {
     const { data: dbProducts, error: pError } = await supabase
         .from("products")
@@ -993,7 +1028,20 @@ async function loadProductsFromDB() {
             }))
     }));
 }
+async function loadSnacksFromDB() {
+    const { data, error } = await supabase
+        .from("snacks")
+        .select("*")
+        .order("created_at", { ascending: true });
 
+    if (error) {
+        console.error("SNACK DB HATA:", error);
+        snacks = [];
+        return;
+    }
+
+    snacks = data || [];
+}
 function renderCategories() {
     categoryView.classList.remove("hidden-view");
     productsView.classList.add("hidden-view");
@@ -1001,6 +1049,17 @@ function renderCategories() {
 
 function renderProducts(category) {
     currentCategory = category;
+    
+    openSauceBtn.classList.add("hidden-view");
+    openSnackBtn.classList.add("hidden-view");
+
+if (category === "doyuran" || category === "pizza") {
+    openSauceBtn.classList.remove("hidden-view");
+}
+
+if (category === "kahve" || category === "sicak") {
+    openSnackBtn.classList.remove("hidden-view");
+}
     currentCategoryTitle.textContent = getCategoryTitle(category);
     menuGrid.innerHTML = "";
 
@@ -1157,6 +1216,14 @@ openSauceBtn.addEventListener("click", () => {
 closeSauceBtn.addEventListener("click", () => {
     sauceModal.style.display = "none";
 });
+    openSnackBtn.addEventListener("click", () => {
+    renderSnacks();
+    snackModal.style.display = "flex";
+});
+
+closeSnackBtn.addEventListener("click", () => {
+    snackModal.style.display = "none";
+});
 
 logoImg.addEventListener("click", () => {
     const password = prompt("Yönetici şifresini gir:");
@@ -1183,6 +1250,7 @@ saveProductBtn.addEventListener("click", saveOrUpdateProduct);
 window.addEventListener("click", (e) => {
     if (e.target === adminModal) closeModal();
     if (e.target === sauceModal) sauceModal.style.display = "none";
+    if (e.target === snackModal) snackModal.style.display = "none";
 });
 
 if (localStorage.getItem("theme") === "dark") {
@@ -1203,6 +1271,7 @@ themeToggleBtn.addEventListener("click", () => {
 });
 
 await loadProductsFromDB();
+await loadSnacksFromDB();
 renderCategories();
 </script>
 
