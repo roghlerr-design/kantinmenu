@@ -852,14 +852,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const ADMIN_PASSWORD = "admin123";
 
-const defaultSauces = [
-    { name: "🍅 Ketçap", price: "+5 TL" },
-    { name: "🥚 Mayonez", price: "+5 TL" },
-    { name: "🧄 Ranch Sos", price: "+10 TL" },
-    { name: "🥪 Burger Sos", price: "+7 TL" },
-    { name: "🧀 Cheddar Sos", price: "+10 TL" }
-];
-
+let sauces = [];
 let products = [];
 let currentCategory = "";
 let editingProductId = null;
@@ -963,7 +956,7 @@ function getCategoryTitle(category) {
 function renderSauces() {
     sauceListContainer.innerHTML = "";
 
-    defaultSauces.forEach(sauce => {
+    sauces.forEach(sauce => {
         const div = document.createElement("div");
         div.className = "menu-item";
         div.style.padding = "14px";
@@ -1030,6 +1023,20 @@ async function loadProductsFromDB() {
                 desc: o.description || ""
             }))
     }));
+}
+    async function loadSaucesFromDB() {
+    const { data, error } = await supabase
+        .from("sauces")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error("SOS DB HATA:", error);
+        sauces = [];
+        return;
+    }
+
+    sauces = data || [];
 }
 async function loadSnacksFromDB() {
     const { data, error } = await supabase
@@ -1275,6 +1282,7 @@ themeToggleBtn.addEventListener("click", () => {
 
 await loadProductsFromDB();
 await loadSnacksFromDB();
+await loadSaucesFromDB();
 renderCategories();
 </script>
 
