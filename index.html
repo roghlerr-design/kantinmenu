@@ -799,7 +799,14 @@
                 <option value="kahvalti">Kahvaltılıklar</option>
             </select>
         </div>
-
+        <div class="admin-form-group">
+    <label>Ürün Türü</label>
+    <select id="specialType">
+        <option value="">Normal Ürün</option>
+        <option value="sauce">Sos</option>
+        <option value="snack">Atıştırmalık</option>
+    </select>
+</div>
         <div class="admin-form-group">
             <label>Ürün Görseli Linki</label>
             <input type="text" id="newImage" placeholder="Örn: burger.png veya https://...">
@@ -968,7 +975,19 @@ function renderSauces() {
                 <span class="item-price">${escapeHtml(sauce.price)}</span>
             </div>
         `;
+          if (body.classList.contains("admin-mode")) {
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Sil";
+    delBtn.style.marginTop = "5px";
 
+    delBtn.onclick = async () => {
+        await supabase.from("sauces").delete().eq("id", sauce.id);
+        await loadSaucesFromDB();
+        renderSauces();
+    };
+
+    div.appendChild(delBtn);
+}
         sauceListContainer.appendChild(div);
     });
 }
@@ -988,7 +1007,19 @@ function renderSnacks() {
             </div>
             ${snack.description ? `<p class="item-desc" style="margin-top:8px;">${escapeHtml(snack.description)}</p>` : ""}
         `;
+         if (body.classList.contains("admin-mode")) {
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Sil";
+    delBtn.style.marginTop = "5px";
 
+    delBtn.onclick = async () => {
+        await supabase.from("snacks").delete().eq("id", snack.id);
+        await loadSnacksFromDB();
+        renderSnacks();
+    };
+
+    div.appendChild(delBtn);
+}
         snackListContainer.appendChild(div);
     });
 }
@@ -1183,24 +1214,50 @@ function collectFormData() {
     return { category, image, desc, options };
 }
 
-function saveOrUpdateProduct() {
+async function saveOrUpdateProduct() {
+    const specialType = document.getElementById("specialType").value;
+
+    // ✅ SOS EKLEME
+    if (specialType === "sauce") {
+        const name = prompt("Sos adı:");
+        const price = prompt("Fiyat:");
+
+        if (!name || !price) return;
+
+        await supabase.from("sauces").insert([{ name, price }]);
+
+        await loadSaucesFromDB();
+        alert("Sos eklendi");
+        closeModal();
+        return;
+    }
+
+    // ✅ SNACK EKLEME
+    if (specialType === "snack") {
+        const name = prompt("Atıştırmalık adı:");
+        const price = prompt("Fiyat:");
+        const description = prompt("Açıklama:");
+
+        if (!name || !price) return;
+
+        await supabase.from("snacks").insert([
+            { name, price, description }
+        ]);
+
+        await loadSnacksFromDB();
+        alert("Atıştırmalık eklendi");
+        closeModal();
+        return;
+    }
+
+    // NORMAL ÜRÜN
     const formData = collectFormData();
     if (!formData) return;
 
-    if (editingProductId) {
-        const index = products.findIndex(p => p.id === editingProductId);
-        if (index !== -1) {
-            products[index] = {
-                ...products[index],
-                ...formData
-            };
-        }
-    } else {
-        products.push({
-            id: generateId(),
-            ...formData
-        });
-    }
+    products.push({
+        id: generateId(),
+        ...formData
+    });
 
     closeModal();
     if (currentCategory) renderProducts(currentCategory);
