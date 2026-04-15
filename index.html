@@ -1278,8 +1278,8 @@ function renderProducts(category) {
 
         itemDiv.innerHTML = `
             <div class="item-img-container">
-                <img src="${escapeHtml(imageSrc)}" class="item-img" alt="${escapeHtml(product.options[0]?.name || "Ürün")}" loading="lazy"
-                     onerror="this.src='urun-gorseli.jpg'">
+               <img src="${escapeHtml(imageSrc)}" class="item-img" alt="${escapeHtml(product.options[0]?.name || "Ürün")}" loading="lazy" decoding="async"
+     onerror="this.src='urun-gorseli.jpg'">
             </div>
             ${optionsHtml}
             ${product.desc ? `<p class="item-desc main-desc-text">${escapeHtml(product.desc)}</p>` : ""}
