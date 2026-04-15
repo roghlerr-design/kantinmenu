@@ -706,7 +706,11 @@
     </style>
 </head>
 <body>
-
+/* --- KARŞILAMA / REKLAM MODALI --- */
+        .welcome-ad-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(12px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;}
+        .welcome-ad-content { position: relative; width: 100%; max-width: 400px; max-height: 85vh; display: flex; justify-content: center; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-sizing: border-box;}
+        .welcome-ad-media { width: 100%; height: auto; max-height: calc(85vh - 16px); object-fit: contain; border-radius: 12px; }
+        .close-ad-btn { position: absolute; top: -10px; right: -10px; background: rgba(239, 68, 68, 0.9); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; border: 2px solid rgba(255,255,255,0.8); z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
 <header>
     <div class="header-content">
         <div class="logo-area">
