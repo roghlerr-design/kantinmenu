@@ -1558,15 +1558,31 @@ closeSnackBtn.addEventListener("click", () => {
     snackModal.style.display = "none";
 });
 
-logoImg.addEventListener("click", () => {
-    const password = prompt("Yönetici şifresini gir:");
-    if (password === null) return;
+let clickTimer = null;
 
-    if (password === ADMIN_PASSWORD) {
-        body.classList.add("admin-mode");
-        alert("Yönetici girişi başarılı.");
+logoImg.addEventListener("click", () => {
+    if (clickTimer) {
+        // 👉 ÇİFT TIK
+        clearTimeout(clickTimer);
+        clickTimer = null;
+
+        const password = prompt("Yönetici şifresini gir:");
+        if (password === null) return;
+
+        if (password === ADMIN_PASSWORD) {
+            body.classList.add("admin-mode");
+            alert("Yönetici girişi başarılı.");
+        } else {
+            alert("Şifre yanlış.");
+        }
+
     } else {
-        alert("Şifre yanlış.");
+        // 👉 TEK TIK
+        clickTimer = setTimeout(() => {
+            renderCategories(); // kategorilere dön
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            clickTimer = null;
+        }, 250); // 250ms bekler (çift tık kontrolü için)
     }
 });
 
