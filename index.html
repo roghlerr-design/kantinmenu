@@ -1,1653 +1,1030 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Özserap Kantin Plus+ Menü</title>
-    <link rel="icon" type="image/x-icon" href="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/icon.png" />
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #1e293b;
-            position: relative;
-            overflow-x: hidden;
-            background: #e0f2fe;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: background 0.5s ease, color 0.5s ease;
-        }
-
-        body::before, body::after {
-            content: '';
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.6;
-            transition: background 0.5s ease;
-        }
-
-        body::before {
-            width: 400px;
-            height: 400px;
-            background: #34d399;
-            top: -100px;
-            left: -100px;
-        }
-
-        body::after {
-            width: 500px;
-            height: 500px;
-            background: #38bdf8;
-            bottom: -150px;
-            right: -150px;
-        }
-
-        header {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            transition: all 0.5s ease;
-        }
-
-        .header-content {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .logo {
-            max-height: 50px;
-            cursor: pointer;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #065f46;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.5);
-        }
-
-        header p {
-            margin: 0;
-            color: #475569;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .theme-toggle-btn {
-            position: absolute;
-            top: 0;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255,255,255,0.6);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle-btn:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        .admin-controls {
-            display: none;
-            width: 100%;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .btn-add-new, .btn-logout {
-            flex: 1;
-            padding: 10px;
-            border-radius: 12px;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.5);
-            cursor: pointer;
-            transition: 0.3s;
-            backdrop-filter: blur(5px);
-        }
-
-        .btn-add-new {
-            background: rgba(16, 185, 129, 0.8);
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-        }
-
-        .btn-logout {
-            background: rgba(239, 68, 68, 0.8);
-            color: white;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
-        }
-
-        .btn-add-new:hover {
-            background: rgba(16, 185, 129, 1);
-            transform: translateY(-2px);
-        }
-
-        .btn-logout:hover {
-            background: rgba(239, 68, 68, 1);
-            transform: translateY(-2px);
-        }
-
-        body.admin-mode .admin-controls {
-            display: flex;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 30px auto 40px auto;
-            padding: 0 15px;
-            flex-grow: 1;
-            width: 100%;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .category-card {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 20px;
-            padding: 30px 15px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.1);
-        }
-
-        .category-card .icon {
-            font-size: 3rem;
-        }
-
-        .category-card h3 {
-            margin: 0;
-            color: #0f172a;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .hidden-view {
-            display: none !important;
-        }
-
-        .back-btn {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255,255,255,0.8);
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 1);
-            color: #0f172a;
-            transform: translateX(-3px);
-        }
-
-        .current-category-title {
-            font-size: 1.5rem;
-            color: #0f172a;
-            margin: 0 0 20px 0;
-            border-bottom: 2px solid rgba(16, 185, 129, 0.3);
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        .top-buttons {
-            position: sticky;
-            top: 86px;
-            z-index: 49;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-            width: 100%;
-            padding: 10px 0;
-            margin-bottom: 12px;
-            background: transparent;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .menu-item {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.1);
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .menu-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
-            background: linear-gradient(to bottom, #10b981, #38bdf8);
-            border-radius: 20px 0 0 20px;
-        }
-
-        .item--container {
-            width: 100%;
-            height: 220px;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 15px;
-            flex-shrink: 0;
-            background-color: rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .item-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center 70%;
-            transition: transform 0.4s ease;
-        }
-
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
-
-        .item-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .item-price {
-            background: rgba(255, 255, 255, 0.7);
-            color: #059669;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-
-        .item-desc {
-            font-size: 0.85rem;
-            color: #475569;
-            margin: 0;
-            line-height: 1.6;
-            flex-grow: 1;
-            font-weight: 500;
-        }
-
-        .opt-desc-text {
-            margin-top: -5px;
-            margin-bottom: 12px;
-            font-size: 0.8rem;
-            opacity: 0.85;
-        }
-
-        .main-desc-text {
-            margin-top: 10px;
-        }
-
-        .item-admin-actions,
-        .extra-admin-actions {
-            display: none;
-            gap: 10px;
-            margin-top: 15px;
-            width: 100%;
-        }
-
-        body.admin-mode .item-admin-actions,
-        body.admin-mode .extra-admin-actions {
-            display: flex;
-        }
-
-        .edit-btn, .delete-btn,
-        .extra-edit-btn, .extra-delete-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            transition: 0.3s;
-            font-size: 0.85rem;
-        }
-
-        .edit-btn, .extra-edit-btn {
-            background: rgba(14, 165, 233, 0.15);
-            color: #0284c7;
-        }
-
-        .edit-btn:hover, .extra-edit-btn:hover {
-            background: #0ea5e9;
-            color: white;
-        }
-
-        .delete-btn, .extra-delete-btn {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-        }
-
-        .delete-btn:hover, .extra-delete-btn:hover {
-            background: #ef4444;
-            color: white;
-        }
-
-        .admin-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(10px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .admin-content {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.8);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .admin-content h2 {
-            margin-top: 0;
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            color: #0f172a;
-        }
-
-        .admin-form-group {
-            margin-bottom: 15px;
-        }
-
-        .admin-form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 0.85rem;
-            color: #334155;
-        }
-
-        .admin-form-group input[type="text"],
-        .admin-form-group textarea,
-        .admin-form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.6);
-            background: rgba(255,255,255,0.5);
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .admin-form-group textarea {
-            resize: vertical;
-            min-height: 90px;
-        }
-
-        .admin-form-group input:focus,
-        .admin-form-group textarea:focus,
-        .admin-form-group select:focus {
-            background: rgba(255,255,255,0.8);
-            border-color: #10b981;
-        }
-
-        .admin-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .close-btn {
-            background: rgba(100, 116, 139, 0.2);
-            color: #334155;
-        }
-
-        .option-row {
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px dashed rgba(16, 185, 129, 0.4);
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .option-row-top {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .option-row input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(255,255,255,0.6);
-            background: rgba(255,255,255,0.5);
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            outline: none;
-            box-sizing: border-box;
-        }
-
-        .remove-opt-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            padding: 10px 12px;
-            font-weight: bold;
-        }
-
-        .footer-container {
-            text-align: center;
-            padding: 20px 15px 40px 15px;
-            width: 100%;
-            margin-top: auto;
-        }
-
-        .footer-signature {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px);
-            padding: 8px 24px;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.6);
-            font-size: 0.85rem;
-            color: #475569;
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .footer-signature span {
-            color: #059669;
-            font-weight: 700;
-        }
-
-        @media (min-width: 768px) {
-    .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    .category-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .header-content { flex-direction: row; justify-content: space-between; padding: 0 20px; }
-    .logo-area { flex-direction: row; }
-    header h1 { font-size: 2rem; }
-    .theme-toggle-btn { position: absolute; top: 15px; right: 15px; }
-    .admin-controls { width: auto; justify-content: flex-end; margin-top: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Öz Serap Kantin Plus | Dijital Menü</title>
+<meta name="description" content="Öz Serap Kantin Plus dijital menüsü.">
+<link rel="icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================  TOKENS  ========================================= */
+:root {
+  --navy:#1e3a8a; --navy-dark:#132660; --navy-light:#3b82f6;
+  --navy-muted:rgba(30,58,138,.12); --navy-glow:rgba(30,58,138,.3);
+  --green:#16a34a; --green-dark:#0f6630; --green-light:#22c55e;
+  --green-muted:rgba(22,163,74,.12); --green-glow:rgba(22,163,74,.3);
+  --bg:#0a0f1e; --bg2:#0d1528; --bg3:#111d38;
+  --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08); --border-accent:rgba(30,58,138,.35);
+  --text:#f0f4ff; --text-sub:#93c5fd; --text-muted:#4a6080;
+  --radius-xl:20px; --radius-lg:14px; --radius-md:10px; --radius-sm:8px;
+  --tr:all .35s cubic-bezier(.25,.46,.45,.94);
+  --img:100px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(30,58,138,.25),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(22,163,74,.15),transparent 60%);z-index:0;pointer-events:none}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(10,15,30,.85);backdrop-filter:blur(24px);border-bottom:1px solid rgba(30,58,138,.25)}
+.header-inner{max-width:900px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.header-logo{width:54px;height:54px;border-radius:12px;object-fit:contain;background:#fff;padding:3px;flex-shrink:0;border:2px solid rgba(30,58,138,.4);box-shadow:0 4px 20px rgba(30,58,138,.35);cursor:pointer;transition:transform .2s}
+.header-logo:hover{transform:scale(1.05)}
+.header-logo:active{transform:scale(.97)}
+.header-brand h1{font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:800;background:linear-gradient(135deg,#93c5fd,#fff 50%,#86efac);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.header-brand p{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-top:2px}
+
+/* CAT NAV */
+.cat-nav{position:sticky;top:79px;z-index:90;background:rgba(10,15,30,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.cat-nav-inner{max-width:900px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.cat-nav-inner::-webkit-scrollbar{display:none}
+.cat-nav-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:none;background:transparent;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:var(--tr);border-bottom:2px solid transparent;white-space:nowrap;letter-spacing:.3px}
+.cat-nav-btn:hover{color:var(--text-sub);border-bottom-color:rgba(59,130,246,.4)}
+.cat-nav-btn.active{color:var(--green-light);border-bottom-color:var(--green-light)}
+
+/* MAIN */
+main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:32px 20px 80px}
+
+/* SECTION */
+.menu-section{margin-bottom:48px}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border-accent)}
+.section-icon{width:42px;height:42px;border-radius:var(--radius-md);background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 4px 16px var(--navy-glow)}
+.section-title{font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:var(--text)}
+.section-title span{color:var(--green-light)}
+.section-count{margin-left:auto;background:var(--green-muted);border:1px solid rgba(22,163,74,.25);color:var(--green-light);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:50px}
+
+/* PRODUCT CARD */
+.product-list{display:flex;flex-direction:column;gap:10px}
+.product-card{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:var(--tr);cursor:pointer;position:relative;opacity:0;transform:translateY(24px)}
+.product-card.visible{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease,border-color .3s,box-shadow .3s,background .3s}
+.product-card:hover{border-color:rgba(30,58,138,.45);background:var(--surface2);box-shadow:0 6px 30px rgba(0,0,0,.3),inset 0 0 30px rgba(30,58,138,.04);transform:translateX(3px) !important}
+.product-img-wrap{flex-shrink:0;width:var(--img);height:var(--img);position:relative;overflow:hidden;background:var(--bg3)}
+.product-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .5s ease}
+.product-card:hover .product-img-wrap img{transform:scale(1.08)}
+.product-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,rgba(10,15,30,.5));pointer-events:none}
+.product-content{flex:1;padding:14px 16px;display:flex;align-items:center;gap:12px;min-width:0}
+.product-info{flex:1;min-width:0}
+.product-name{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-desc{font-size:.74rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-options{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.opt-chip{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:50px;background:rgba(30,58,138,.12);border:1px solid rgba(30,58,138,.25);color:var(--text-sub);white-space:nowrap}
+.opt-chip .chip-price{color:var(--green-light);font-weight:700}
+.product-price{flex-shrink:0;text-align:right}
+.price-main{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:800;color:var(--green-light);white-space:nowrap}
+.price-main .price-unit{font-size:.7rem;font-weight:600;color:var(--green);margin-left:1px}
+.price-from{font-size:.66rem;color:var(--text-muted);font-weight:500;margin-top:1px;text-align:right}
+.card-arrow{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(30,58,138,.1);color:var(--text-muted);font-size:.8rem;transition:var(--tr);flex-shrink:0;margin-right:2px}
+.product-card:hover .card-arrow{background:rgba(22,163,74,.15);color:var(--green-light);transform:translateX(2px)}
+
+/* ADMIN BADGES on card */
+.admin-card-actions{display:none;position:absolute;top:6px;right:6px;gap:5px}
+body.admin-mode .admin-card-actions{display:flex}
+.admin-edit-btn,.admin-del-btn{padding:4px 10px;border-radius:6px;border:none;font-size:.72rem;font-weight:700;cursor:pointer;transition:var(--tr)}
+.admin-edit-btn{background:rgba(14,165,233,.2);color:#38bdf8}
+.admin-edit-btn:hover{background:#0ea5e9;color:#fff}
+.admin-del-btn{background:rgba(239,68,68,.2);color:#f87171}
+.admin-del-btn:hover{background:#ef4444;color:#fff}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.85rem}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:10px;display:block}
+
+/* LOADING SPINNER */
+.loading-ring{display:flex;justify-content:center;padding:60px 0;position:relative;z-index:1}
+.loading-ring::after{content:'';width:36px;height:36px;border:3px solid rgba(30,58,138,.2);border-top-color:var(--navy-light);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DETAIL MODAL */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(16px);z-index:200;align-items:flex-end;justify-content:center}
+.detail-overlay.open{display:flex}
+.detail-sheet{width:100%;max-width:500px;background:linear-gradient(180deg,#141d3a,#0d1428);border:1px solid rgba(30,58,138,.3);border-radius:24px 24px 0 0;padding:20px 24px 36px;max-height:90vh;overflow-y:auto;animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);position:relative}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet-handle{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 auto 16px}
+.sheet-img{width:100%;height:200px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:16px}
+.sheet-title{font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:10px}
+.sheet-desc{font-size:.85rem;color:var(--text-muted);line-height:1.65;margin-bottom:16px}
+.sheet-opts{display:flex;flex-direction:column;gap:8px}
+.sheet-opt-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:rgba(30,58,138,.08);border:1px solid rgba(30,58,138,.18);border-radius:var(--radius-md)}
+.sheet-opt-name{font-size:.88rem;font-weight:600;color:var(--text)}
+.sheet-opt-price{font-size:.92rem;font-weight:800;color:var(--green-light)}
+.sheet-close{position:absolute;top:16px;right:20px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--text-muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+.sheet-close:hover{background:rgba(239,68,68,.2);color:#f87171}
+
+/* =========================================  ADMIN PANEL  ========================================= */
+/* Password modal */
+.pw-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(18px);z-index:9000;align-items:center;justify-content:center}
+.pw-overlay.open{display:flex}
+.pw-box{background:linear-gradient(160deg,#141d3a,#0d1428);border:1px solid rgba(30,58,138,.35);border-radius:24px;padding:36px 32px;width:100%;max-width:360px;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 60px rgba(30,58,138,.15);animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.pw-icon{font-size:2.5rem;margin-bottom:12px}
+.pw-title{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.pw-sub{font-size:.78rem;color:var(--text-muted);margin-bottom:24px}
+.pw-input{width:100%;padding:12px 16px;background:rgba(30,58,138,.1);border:1px solid rgba(30,58,138,.3);border-radius:var(--radius-md);color:var(--text);font-family:'Inter',sans-serif;font-size:.95rem;outline:none;text-align:center;letter-spacing:4px;margin-bottom:14px;transition:border-color .3s}
+.pw-input:focus{border-color:var(--navy-light)}
+.pw-input.shake{animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pw-btn{width:100%;padding:12px;border-radius:var(--radius-md);border:none;background:linear-gradient(135deg,var(--navy-dark),var(--navy));color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tr);margin-bottom:10px}
+.pw-btn:hover{box-shadow:0 8px 24px var(--navy-glow)}
+.pw-cancel{background:none;border:none;color:var(--text-muted);font-size:.82rem;cursor:pointer;transition:color .3s}
+.pw-cancel:hover{color:var(--text)}
+.pw-err{font-size:.8rem;color:#f87171;margin-top:-8px;margin-bottom:12px;display:none}
+
+/* Admin panel drawer */
+.admin-panel{position:fixed;top:0;right:-100%;width:100%;max-width:480px;height:100vh;background:linear-gradient(160deg,#0e1830,#0a0f1e);border-left:1px solid rgba(30,58,138,.3);z-index:8000;box-shadow:-20px 0 60px rgba(0,0,0,.5);transition:right .4s cubic-bezier(.25,.46,.45,.94);display:flex;flex-direction:column;overflow:hidden}
+.admin-panel.open{right:0}
+.admin-panel-header{padding:20px 20px 0;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.admin-panel-header h2{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;color:var(--text);flex:1}
+.admin-panel-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text-muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+.admin-panel-close:hover{background:rgba(239,68,68,.15);color:#f87171}
+.admin-panel-badge{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:50px}
+.admin-add-btn{margin:16px 20px;padding:13px;border-radius:var(--radius-md);border:none;background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0}
+.admin-add-btn:hover{box-shadow:0 8px 24px var(--green-glow);transform:translateY(-1px)}
+.admin-cat-tabs{display:flex;gap:4px;padding:0 20px 12px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.admin-cat-tabs::-webkit-scrollbar{display:none}
+.admin-tab{flex-shrink:0;padding:7px 14px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:var(--tr)}
+.admin-tab.active{background:var(--navy-muted);border-color:rgba(30,58,138,.4);color:var(--text-sub)}
+.admin-product-list{flex:1;overflow-y:auto;padding:0 20px 20px;scrollbar-width:thin;scrollbar-color:rgba(30,58,138,.3) transparent}
+.admin-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:8px;transition:var(--tr)}
+.admin-item:hover{border-color:rgba(30,58,138,.35);background:var(--surface2)}
+.admin-item-img{width:52px;height:52px;border-radius:var(--radius-sm);object-fit:cover;background:var(--bg3);flex-shrink:0}
+.admin-item-info{flex:1;min-width:0}
+.admin-item-name{font-size:.88rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-item-cat{font-size:.7rem;color:var(--text-muted);margin-top:2px}
+.admin-item-btns{display:flex;gap:6px;flex-shrink:0}
+.a-edit,.a-del{padding:6px 12px;border-radius:var(--radius-sm);border:none;font-size:.75rem;font-weight:700;cursor:pointer;transition:var(--tr)}
+.a-edit{background:rgba(14,165,233,.15);color:#38bdf8}
+.a-edit:hover{background:#0ea5e9;color:#fff}
+.a-del{background:rgba(239,68,68,.15);color:#f87171}
+.a-del:hover{background:#ef4444;color:#fff}
+
+/* Admin panel overlay backdrop */
+.admin-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:7990}
+.admin-backdrop.open{display:block}
+
+/* =========================================  ADD/EDIT MODAL  ========================================= */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(18px);z-index:9500;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:linear-gradient(160deg,#141d3a,#0a0f1e);border:1px solid rgba(30,58,138,.3);border-radius:24px;padding:28px 24px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.7);animation:popIn .4s cubic-bezier(.34,1.56,.64,1);scrollbar-width:thin;scrollbar-color:rgba(30,58,138,.3) transparent}
+.modal-title{font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.modal-title .mt-accent{color:var(--green-light)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.75rem;font-weight:700;color:var(--text-sub);margin-bottom:7px;letter-spacing:.8px;text-transform:uppercase}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 14px;background:rgba(30,58,138,.08);border:1px solid rgba(30,58,138,.25);border-radius:var(--radius-md);color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .3s,background .3s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--navy-light);background:rgba(30,58,138,.14)}
+.form-select option{background:#0d1528;color:#f0f4ff}
+.form-textarea{resize:vertical;min-height:80px}
+
+/* Image upload area */
+.img-upload-area{border:2px dashed rgba(30,58,138,.35);border-radius:var(--radius-lg);padding:20px;text-align:center;cursor:pointer;transition:var(--tr);position:relative;overflow:hidden}
+.img-upload-area:hover{border-color:var(--navy-light);background:rgba(30,58,138,.06)}
+.img-upload-area.has-img{border-style:solid;border-color:var(--green);background:rgba(22,163,74,.05)}
+.img-upload-preview{width:100%;max-height:160px;object-fit:cover;border-radius:var(--radius-md);display:none;margin-bottom:8px}
+.img-upload-area.has-img .img-upload-preview{display:block}
+.img-upload-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-muted)}
+.img-upload-area.has-img .img-upload-placeholder{display:none}
+.img-upload-icon{font-size:2rem}
+.img-upload-text{font-size:.82rem;font-weight:500}
+.img-upload-sub{font-size:.72rem;opacity:.6}
+.img-upload-input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.img-upload-spinner{display:none;font-size:.8rem;color:var(--text-sub);margin-top:6px}
+.img-upload-area.uploading .img-upload-spinner{display:block}
+.img-upload-area.uploading .img-upload-placeholder{opacity:.4}
+
+/* Options rows */
+.options-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.options-label{font-size:.75rem;font-weight:700;color:var(--text-sub);letter-spacing:.8px;text-transform:uppercase}
+.add-opt-btn{padding:5px 12px;border-radius:6px;border:none;background:rgba(22,163,74,.15);color:var(--green-light);font-size:.75rem;font-weight:700;cursor:pointer;transition:var(--tr)}
+.add-opt-btn:hover{background:rgba(22,163,74,.3)}
+.option-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;background:rgba(30,58,138,.06);border:1px solid rgba(30,58,138,.18);border-radius:var(--radius-md);padding:10px 12px}
+.opt-name-input{flex:2}
+.opt-price-input{flex:1}
+.opt-remove-btn{width:28px;height:28px;border-radius:50%;border:none;background:rgba(239,68,68,.15);color:#f87171;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0}
+.opt-remove-btn:hover{background:#ef4444;color:#fff}
+
+/* Modal buttons */
+.modal-btns{display:flex;gap:10px;margin-top:22px}
+.btn-save{flex:2;padding:13px;border-radius:var(--radius-md);border:none;background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:var(--tr)}
+.btn-save:hover{box-shadow:0 8px 24px var(--green-glow);transform:translateY(-1px)}
+.btn-save:disabled{opacity:.5;cursor:wait}
+.btn-cancel{flex:1;padding:13px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:var(--tr)}
+.btn-cancel:hover{background:var(--surface2);color:var(--text)}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(24px);background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;padding:11px 26px;border-radius:50px;font-weight:700;font-size:.85rem;z-index:99999;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;box-shadow:0 8px 24px var(--green-glow);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:linear-gradient(135deg,#7f1d1d,#ef4444);box-shadow:0 8px 24px rgba(239,68,68,.3)}
+
+/* WELCOME AD */
+#welcomeAd{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
+.ad-content{position:relative;max-width:420px;width:100%;background:rgba(30,58,138,.08);border:1px solid rgba(30,58,138,.3);border-radius:24px;padding:8px;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 60px rgba(30,58,138,.15)}
+.ad-video{width:100%;border-radius:18px;max-height:calc(85vh - 40px);object-fit:contain;display:block}
+.ad-close{position:absolute;top:-10px;right:-10px;width:36px;height:36px;background:#ef4444;color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);transition:transform .3s}
+.ad-close:hover{transform:scale(1.1) rotate(90deg)}
+
+/* FOOTER */
+footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
+.footer-text{display:inline-block;background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(10px);padding:9px 24px;border-radius:50px;font-size:.78rem;color:var(--text-muted)}
+.footer-text .brand{color:var(--green-light);font-weight:700}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:rgba(30,58,138,.4);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--navy-light)}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  :root{--img:80px}
+  .header-brand h1{font-size:1rem}
+  .product-name{font-size:.85rem}
+  .admin-panel{max-width:100%}
+  .modal-box{padding:22px 18px}
 }
 
-        @media (min-width: 1024px) {
-            .menu-grid, .category-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        body.dark-mode {
-            background: #0f172a;
-            color: #f8fafc;
-        }
-
-        body.dark-mode::before { background: #064e3b; }
-        body.dark-mode::after { background: #0c4a6e; }
-
-        body.dark-mode header {
-            background: rgba(15, 23, 42, 0.6);
-            border-bottom-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode header h1 {
-            color: #34d399;
-            text-shadow: 0 2px 10px rgba(52, 211, 153, 0.2);
-        }
-
-        body.dark-mode header p { color: #94a3b8; }
-
-        body.dark-mode .theme-toggle-btn {
-            background: rgba(15, 23, 42, 0.5);
-            border-color: rgba(255,255,255,0.2);
-            color: #f8fafc;
-        }
-
-        body.dark-mode .theme-toggle-btn:hover {
-            background: rgba(30, 41, 59, 0.8);
-        }
-
-        body.dark-mode .category-card {
-            background: rgba(30, 41, 59, 0.5);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode .category-card:hover {
-            background: rgba(30, 41, 59, 0.8);
-        }
-
-        body.dark-mode .category-card h3 { color: #f8fafc; }
-
-        body.dark-mode .back-btn {
-            background: rgba(30, 41, 59, 0.85);
-            color: #f8fafc;
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode .current-category-title {
-            color: #f8fafc;
-            border-bottom-color: rgba(52, 211, 153, 0.3);
-        }
-
-        body.dark-mode .menu-item {
-            background: rgba(30, 41, 59, 0.5);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode .menu-item:hover {
-            background: rgba(30, 41, 59, 0.8);
-        }
-
-        body.dark-mode .item-title { color: #f8fafc; }
-        body.dark-mode .item-price {
-            background: rgba(15, 23, 42, 0.8);
-            color: #34d399;
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode .item-desc { color: #94a3b8; }
-
-        body.dark-mode .item-img-container {
-            background-color: rgba(15, 23, 42, 0.5);
-          width: 100%;
-    height: 220px;
-        }
-
-        body.dark-mode .footer-signature {
-            background: rgba(15, 23, 42, 0.6);
-            border-color: rgba(255,255,255,0.1);
-            color: #94a3b8;
-        }
-
-        body.dark-mode .admin-content {
-            background: rgba(15, 23, 42, 0.85);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode .admin-content h2 { color: #f8fafc; }
-        body.dark-mode .admin-form-group label { color: #94a3b8; }
-
-        body.dark-mode .admin-form-group input[type="text"],
-        body.dark-mode .admin-form-group textarea,
-        body.dark-mode .admin-form-group select,
-        body.dark-mode .option-row input[type="text"] {
-            background: rgba(30, 41, 59, 0.8);
-            color: #f8fafc;
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        body.dark-mode .close-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #cbd5e1;
-        }
-        /* --- KARŞILAMA / REKLAM MODALI --- */
-        .welcome-ad-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(12px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;}
-        .welcome-ad-content { position: relative; width: 100%; max-width: 400px; max-height: 85vh; display: flex; justify-content: center; align-items: center; background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-sizing: border-box;}
-        .welcome-ad-media { width: 100%; height: auto; max-height: calc(85vh - 16px); object-fit: contain; border-radius: 12px; }
-        .close-ad-btn { position: absolute; top: -10px; right: -10px; background: rgba(239, 68, 68, 0.9); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; border: 2px solid rgba(255,255,255,0.8); z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
-    </style>
+/* STAGGER */
+.product-card:nth-child(1){transition-delay:.00s}
+.product-card:nth-child(2){transition-delay:.05s}
+.product-card:nth-child(3){transition-delay:.10s}
+.product-card:nth-child(4){transition-delay:.15s}
+.product-card:nth-child(5){transition-delay:.20s}
+.product-card:nth-child(6){transition-delay:.25s}
+.product-card:nth-child(7){transition-delay:.30s}
+.product-card:nth-child(8){transition-delay:.35s}
+.product-card:nth-child(9){transition-delay:.40s}
+.product-card:nth-child(10){transition-delay:.45s}
+</style>
 </head>
 <body>
 
+<!-- WELCOME AD -->
+<div id="welcomeAd">
+  <div class="ad-content">
+    <button class="ad-close" id="adCloseBtn">&times;</button>
+    <video class="ad-video" autoplay muted loop playsinline>
+      <source src="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/reklammp4.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<!-- HEADER -->
 <header>
-    <div class="header-content">
-        <div class="logo-area">
-            <img src="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/logo.png" alt="Özserap Logo" class="logo" id="logoImg" title="Yönetici girişi" loading="eager" decoding="async">
-                <h1>Özserap Kantin Plus+</h1>
-                <p>Kantin & Kafe & Restaurant</p>
-            </div>
-        </div>
-
-        <button id="themeToggle" class="theme-toggle-btn" title="Temayı Değiştir">🌙</button>
-
-        <div class="admin-controls">
-            <button class="btn-add-new" id="openAddModalBtn">+ Yeni Ürün</button>
-            <button class="btn-logout" id="logoutBtn">Çıkış Yap</button>
-        </div>
+  <div class="header-inner">
+    <img src="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/logo.png"
+         alt="Öz Serap Kantin Plus Logosu" class="header-logo" id="headerLogo"
+         title="Admin girişi için çift tıklayın">
+    <div class="header-brand">
+      <h1>Öz Serap Kantin Plus</h1>
+      <p>Kantin &amp; Kafe &amp; Restaurant</p>
     </div>
+  </div>
 </header>
 
-<div class="container" id="categoryView">
-    <div class="category-grid">
-        <div class="category-card" data-category="doyuran" data-title="Doyuran Lezzetler">
-            <div class="icon">🍔</div>
-            <h3>Doyuran Lezzetler</h3>
-        </div>
-        <div class="category-card" data-category="sicak" data-title="Sıcak İçecekler">
-            <div class="icon">☕</div>
-            <h3>Sıcak İçecekler</h3>
-        </div>
-        <div class="category-card" data-category="soguk" data-title="Soğuk İçecekler">
-            <div class="icon">🥤</div>
-            <h3>Soğuk İçecekler</h3>
-        </div>
-        <div class="category-card" data-category="pizza" data-title="Pizzalar">
-            <div class="icon">🍕</div>
-            <h3>Pizzalar</h3>
-        </div>
-        <div class="category-card" data-category="kahve" data-title="Yeni Nesil Kahve">
-            <div class="icon">☕</div>
-            <h3>Yeni Nesil Kahve</h3>
-        </div>
-        <div class="category-card" data-category="kahvalti" data-title="Kahvaltılıklar">
-            <div class="icon">🍳</div>
-            <h3>Kahvaltılıklar</h3>
-        </div>
-    </div>
+<!-- CATEGORY NAV -->
+<nav class="cat-nav" aria-label="Kategori Kısayolları">
+  <div class="cat-nav-inner">
+    <button class="cat-nav-btn active" data-target="doyuran" onclick="scrollToSection('doyuran')"><span>🍔</span> Doyuran</button>
+    <button class="cat-nav-btn" data-target="sicak" onclick="scrollToSection('sicak')"><span>☕</span> Sıcak İçecek</button>
+    <button class="cat-nav-btn" data-target="soguk" onclick="scrollToSection('soguk')"><span>🥤</span> Soğuk İçecek</button>
+    <button class="cat-nav-btn" data-target="pizza" onclick="scrollToSection('pizza')"><span>🍕</span> Pizza</button>
+    <button class="cat-nav-btn" data-target="kahve" onclick="scrollToSection('kahve')"><span>☕</span> Yeni Nesil Kahve</button>
+    <button class="cat-nav-btn" data-target="kahvalti" onclick="scrollToSection('kahvalti')"><span>🥐</span> Kahvaltılık</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent">
+  <div class="loading-ring"></div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">
+    <span class="brand">Öz Serap Kantin Plus</span> — Taze Lezzetler
+  </div>
+</footer>
+
+<!-- ========== DETAIL MODAL ========== -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="detail-sheet" id="detailSheet" style="position:relative">
+    <button class="sheet-close" onclick="closeDetail(null,true)">×</button>
+    <div class="sheet-handle"></div>
+    <img class="sheet-img" id="sheetImg" src="" alt="">
+    <div class="sheet-title" id="sheetTitle"></div>
+    <div class="sheet-desc" id="sheetDesc"></div>
+    <div class="sheet-opts" id="sheetOpts"></div>
+  </div>
 </div>
 
-<div class="container hidden-view" id="productsView">
-    <div class="top-buttons">
-        <button class="back-btn" id="backToCategoriesBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Kategorilere Dön
-        </button>
-
-        <button class="back-btn hidden-view" id="openSauceBtn" style="background: rgba(16, 185, 129, 0.15); color: #059669; border-color: rgba(16, 185, 129, 0.3);">
-            ✨ Sos Seçenekleri
-        </button>
-
-        <button class="back-btn hidden-view" id="openSnackBtn" style="background: rgba(245, 158, 11, 0.15); color: #d97706; border-color: rgba(245, 158, 11, 0.3);">
-            🍪 Atıştırmalıklar
-        </button>
-    </div>
-
-    <h2 class="current-category-title" id="currentCategoryTitle">Kategori Adı</h2>
-    <div class="menu-grid" id="menuGrid"></div>
+<!-- ========== PASSWORD MODAL ========== -->
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-box">
+    <div class="pw-icon">🔒</div>
+    <div class="pw-title">Yönetici Girişi</div>
+    <div class="pw-sub">Devam etmek için şifrenizi girin</div>
+    <input type="password" class="pw-input" id="pwInput" placeholder="••••••••" maxlength="20">
+    <div class="pw-err" id="pwErr">Hatalı şifre, tekrar deneyin.</div>
+    <button class="pw-btn" id="pwSubmitBtn">Giriş Yap</button>
+    <button class="pw-cancel" id="pwCancelBtn">Vazgeç</button>
+  </div>
 </div>
 
-<div class="footer-container">
-    <div class="footer-signature">
-        Made by <span>Oğuzhan Yavaş</span> 
-    </div>
-</div>
-<div id="welcomeAdModal" class="welcome-ad-modal">
-    <div class="welcome-ad-content">
-        <span class="close-ad-btn" id="closeAdBtn">&times;</span>
+<!-- ========== ADMIN BACKDROP ========== -->
+<div class="admin-backdrop" id="adminBackdrop" onclick="closeAdminPanel()"></div>
 
-        <video id="welcomeAdVideo" class="welcome-ad-media" autoplay muted loop playsinline controls>
-            <source src="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/reklammp4.mp4" type="video/mp4">
-        </video>
+<!-- ========== ADMIN PANEL ========== -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-panel-header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:1.3rem">⚙️</span>
+      <h2>Admin Panel</h2>
+      <span class="admin-panel-badge">YÖNETİCİ</span>
     </div>
-</div>
-<div class="admin-modal" id="adminModal">
-    <div class="admin-content">
-        <h2 id="adminModalTitle">Yeni Ürün Ekle</h2>
+    <button class="admin-panel-close" onclick="closeAdminPanel()">×</button>
+  </div>
 
-        <div class="admin-form-group">
-            <label>Kategori</label>
-            <select id="newCategory">
-                <option value="doyuran">Doyuran Lezzetler</option>
-                <option value="sicak">Sıcak İçecekler</option>
-                <option value="soguk">Soğuk İçecekler</option>
-                <option value="pizza">Pizzalar</option>
-                <option value="kahve">Yeni Nesil Kahve</option>
-                <option value="kahvalti">Kahvaltılıklar</option>
-            </select>
+  <button class="admin-add-btn" onclick="openProductModal()">
+    <span style="font-size:1.2rem">＋</span> Yeni Ürün Ekle
+  </button>
+
+  <div class="admin-cat-tabs" id="adminCatTabs">
+    <button class="admin-tab active" data-cat="all" onclick="filterAdminCat('all',this)">Tümü</button>
+    <button class="admin-tab" data-cat="doyuran" onclick="filterAdminCat('doyuran',this)">🍔 Doyuran</button>
+    <button class="admin-tab" data-cat="sicak" onclick="filterAdminCat('sicak',this)">☕ Sıcak</button>
+    <button class="admin-tab" data-cat="soguk" onclick="filterAdminCat('soguk',this)">🥤 Soğuk</button>
+    <button class="admin-tab" data-cat="pizza" onclick="filterAdminCat('pizza',this)">🍕 Pizza</button>
+    <button class="admin-tab" data-cat="kahve" onclick="filterAdminCat('kahve',this)">☕ Kahve</button>
+    <button class="admin-tab" data-cat="kahvalti" onclick="filterAdminCat('kahvalti',this)">🥐 Kahvaltı</button>
+  </div>
+
+  <div class="admin-product-list" id="adminProductList">
+    <div class="loading-ring"></div>
+  </div>
+</div>
+
+<!-- ========== ADD/EDIT PRODUCT MODAL ========== -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span id="modalTitleIcon">✦</span>
+      <span class="mt-accent" id="modalTitleText">Yeni Ürün Ekle</span>
+    </div>
+
+    <input type="hidden" id="editProductId">
+
+    <!-- Kategori -->
+    <div class="form-group">
+      <label class="form-label">Kategori</label>
+      <select class="form-select" id="fCategory">
+        <option value="doyuran">🍔 Doyuran Lezzetler</option>
+        <option value="sicak">☕ Sıcak İçecekler</option>
+        <option value="soguk">🥤 Soğuk İçecekler</option>
+        <option value="pizza">🍕 Pizzalar</option>
+        <option value="kahve">☕ Yeni Nesil Kahve</option>
+        <option value="kahvalti">🥐 Kahvaltılıklar</option>
+      </select>
+    </div>
+
+    <!-- Görsel -->
+    <div class="form-group">
+      <label class="form-label">Ürün Görseli</label>
+      <div class="img-upload-area" id="imgUploadArea">
+        <input type="file" class="img-upload-input" id="imgFileInput" accept="image/*">
+        <img class="img-upload-preview" id="imgPreview" alt="Önizleme">
+        <div class="img-upload-placeholder">
+          <span class="img-upload-icon">📷</span>
+          <span class="img-upload-text">Görsel yüklemek için tıklayın</span>
+          <span class="img-upload-sub">JPG, PNG, WebP — Max 10MB</span>
         </div>
-
-        <div class="admin-form-group">
-            <label>Ürün Türü</label>
-            <select id="specialType">
-                <option value="">Normal Ürün</option>
-                <option value="sauce">Sos</option>
-                <option value="snack">Atıştırmalık</option>
-            </select>
-        </div>
-        
-     
-           
-        <div class="admin-form-group">
-            <label>Ürün Görseli Linki</label>
-            <input type="text" id="newImage" placeholder="Örn: burger.png veya https://...">
-            <input type="file" id="imageUpload" accept="image/*" >
-        </div>
-
-        <div class="admin-form-group" id="dynamicOptionsGroup">
-            <label style="display:flex; justify-content:space-between; align-items:center;">
-                Ürün Seçenekleri
-                <button type="button" id="addOptionBtn" style="background:#10b981; color:white; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.75rem; font-weight:600;">
-                    + Seçenek Ekle
-                </button>
-            </label>
-            <div id="optionsContainer"></div>
-        </div>
-
-        <div class="admin-form-group">
-            <label>Ürün Genel İçeriği / Açıklama</label>
-            <textarea id="newDesc" placeholder="Örn: Gurme susamlı ekmek, dana köfte, cheddar..."></textarea>
-        </div>
-
-        <button class="admin-btn" id="saveProductBtn">Kaydet</button>
-        <button class="admin-btn close-btn" id="closeAdminBtn">Vazgeç</button>
+        <div class="img-upload-spinner">⏳ Supabase'e yükleniyor…</div>
+      </div>
+      <input type="hidden" id="fImageUrl">
     </div>
+
+    <!-- Ürün Adı / Seçenekler -->
+    <div class="form-group">
+      <div class="options-header">
+        <span class="options-label">Ürün Adı &amp; Fiyat Seçenekleri</span>
+        <button type="button" class="add-opt-btn" onclick="addOptionRow()">+ Seçenek Ekle</button>
+      </div>
+      <div id="optionsContainer"></div>
+    </div>
+
+    <!-- Açıklama -->
+    <div class="form-group">
+      <label class="form-label">İçindekiler / Açıklama</label>
+      <textarea class="form-textarea" id="fDescription" placeholder="Örn: Dana köfte, marul, domates, cheddar…"></textarea>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-save" id="saveProductBtn" onclick="saveProduct()">💾 Kaydet</button>
+      <button class="btn-cancel" onclick="closeProductModal()">Vazgeç</button>
+    </div>
+  </div>
 </div>
 
-<div class="admin-modal" id="sauceModal">
-    <div class="admin-content" style="max-width: 400px;">
-        <h2 style="color: #059669; border-bottom: 2px solid #10b981; padding-bottom: 10px; margin-bottom: 20px;">
-            Sos Menüsü
-        </h2>
-        <div id="sauceListContainer"></div>
-        <button class="admin-btn close-btn" id="closeSauceBtn" style="margin-top: 20px;">Kapat</button>
-    </div>
-</div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-<div class="admin-modal" id="snackModal">
-    <div class="admin-content" style="max-width: 400px;">
-        <h2 style="color: #d97706; border-bottom: 2px solid #f59e0b; padding-bottom: 10px; margin-bottom: 20px;">
-            Atıştırmalıklar
-        </h2>
-        <div id="snackListContainer"></div>
-        <button class="admin-btn close-btn" id="closeSnackBtn" style="margin-top: 20px;">Kapat</button>
-    </div>
-</div>
-
+<!-- ========== SCRIPTS ========== -->
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-const supabaseUrl = "https://gojphwhnmvmkpawriofu.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvanBod2hubXZta3Bhd3Jpb2Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIyNjQsImV4cCI6MjA5MTY3ODI2NH0.5PgZKZjOaWbZfIZdDIGMNyw4mhj2-3SwjsJMVWaLSjg";
-const supabase = createClient(supabaseUrl, supabaseKey);
+/* ─── Supabase init ─── */
+const SUPA_URL  = 'https://gojphwhnmvmkpawriofu.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvanBod2hubXZta3Bhd3Jpb2Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIyNjQsImV4cCI6MjA5MTY3ODI2NH0.5PgZKZjOaWbZfIZdDIGMNyw4mhj2-3SwjsJMVWaLSjg';
+const db        = createClient(SUPA_URL, SUPA_KEY);
 
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_PASS = 'admin123';
+const BUCKET     = 'menu-images';
 
-let products = [];
-let sauces = [];
-let snacks = [];
-let currentCategory = "";
-let editingProductId = null;
+/* ─── State ─── */
+let products    = [];
+let allOptions  = [];
+let adminCatFilter = 'all';
+let currentUploadUrl = '';
+let isAdmin = false;
 
-const body = document.body;
-const themeToggleBtn = document.getElementById("themeToggle");
-const logoImg = document.getElementById("logoImg");
-const openAddModalBtn = document.getElementById("openAddModalBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const adminModal = document.getElementById("adminModal");
-const adminModalTitle = document.getElementById("adminModalTitle");
-const saveProductBtn = document.getElementById("saveProductBtn");
-const closeAdminBtn = document.getElementById("closeAdminBtn");
-const optionsContainer = document.getElementById("optionsContainer");
-const addOptionBtn = document.getElementById("addOptionBtn");
-const categoryView = document.getElementById("categoryView");
-const productsView = document.getElementById("productsView");
-const backToCategoriesBtn = document.getElementById("backToCategoriesBtn");
-const currentCategoryTitle = document.getElementById("currentCategoryTitle");
-const menuGrid = document.getElementById("menuGrid");
-const categoryCards = document.querySelectorAll(".category-card");
+const CATEGORIES = [
+  { id:'doyuran', label:'Doyuran Lezzetler', icon:'🍔' },
+  { id:'sicak',   label:'Sıcak İçecekler',   icon:'☕' },
+  { id:'soguk',   label:'Soğuk İçecekler',   icon:'🥤' },
+  { id:'pizza',   label:'Pizzalar',           icon:'🍕' },
+  { id:'kahve',   label:'Yeni Nesil Kahve',   icon:'☕' },
+  { id:'kahvalti',label:'Kahvaltılıklar',     icon:'🥐' },
+];
 
-const sauceModal = document.getElementById("sauceModal");
-const openSauceBtn = document.getElementById("openSauceBtn");
-const closeSauceBtn = document.getElementById("closeSauceBtn");
-const sauceListContainer = document.getElementById("sauceListContainer");
+/* ─── Expose globals for onclick attrs ─── */
+window.scrollToSection  = scrollToSection;
+window.closeDetail      = closeDetail;
+window.openProductModal = openProductModal;
+window.closeProductModal= closeProductModal;
+window.closeAdminPanel  = closeAdminPanel;
+window.filterAdminCat   = filterAdminCat;
+window.addOptionRow     = addOptionRow;
+window.saveProduct      = saveProduct;
 
-const snackModal = document.getElementById("snackModal");
-const openSnackBtn = document.getElementById("openSnackBtn");
-const closeSnackBtn = document.getElementById("closeSnackBtn");
-const snackListContainer = document.getElementById("snackListContainer");
-const welcomeAdModal = document.getElementById("welcomeAdModal");
-const closeAdBtn = document.getElementById("closeAdBtn");
-const welcomeAdVideo = document.getElementById("welcomeAdVideo");
-    
-async function uploadAndResizeImage(file) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        const reader = new FileReader();
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+document.getElementById('adCloseBtn').addEventListener('click', () => {
+  document.getElementById('welcomeAd').style.display = 'none';
+});
 
-        reader.onload = (e) => {
-            img.src = e.target.result;
-        };
-
-        img.onload = async () => {
-            const canvas = document.createElement("canvas");
-
-            const maxWidth = 800;
-            const scale = maxWidth / img.width;
-
-            canvas.width = maxWidth;
-            canvas.height = img.height * scale;
-
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-            canvas.toBlob(async (blob) => {
-                const fileName = Date.now() + ".webp";
-
-                const { data, error } = await supabase
-                    .storage
-                    .from("menu-images")
-                    .upload(`products/${fileName}`, blob, {
-                        contentType: "image/webp",
-                        cacheControl: "31536000",
-                        upsert: true
-                    });
-
-                if (error) {
-                    alert("Fotoğraf yüklenemedi");
-                    console.error(error);
-                    resolve(null);
-                    return;
-                }
-
-                const { data: publicUrlData } = supabase
-                    .storage
-                    .from("menu-images")
-                    .getPublicUrl(data.path);
-
-                resolve(publicUrlData.publicUrl);
-            }, "image/webp", 0.8);
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
-function escapeHtml(text) {
-    return String(text || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+async function init() {
+  await loadData();
+  renderMainMenu();
+  setupScrollReveal();
+  setupCatNavObserver();
+  setupLogoDoubleClick();
+  setupPwModal();
+  setupImageUpload();
 }
 
-function addOptionRow(nameVal = "", priceVal = "", descVal = "") {
-    const row = document.createElement("div");
-    row.className = "option-row";
+async function loadData() {
+  const [{ data: prods }, { data: opts }] = await Promise.all([
+    db.from('products').select('*'),
+    db.from('product_options').select('*'),
+  ]);
+  products   = prods   || [];
+  allOptions = opts    || [];
+}
 
-    row.innerHTML = `
-        <div class="option-row-top">
-            <input type="text" class="opt-name" placeholder="Ürün adı" value="${escapeHtml(nameVal)}" style="flex:2;">
-            <input type="text" class="opt-price" placeholder="Fiyat" value="${escapeHtml(priceVal)}" style="flex:1;">
-            <button type="button" class="remove-opt-btn">X</button>
-        </div>
-        <input type="text" class="opt-desc" placeholder="Bu seçeneğe özel açıklama (isteğe bağlı)" value="${escapeHtml(descVal)}">
+function getOpts(productId) {
+  return allOptions.filter(o => o.product_id === productId);
+}
+
+/* ══════════════════════════════════════
+   RENDER MAIN MENU
+══════════════════════════════════════ */
+function renderMainMenu() {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
+
+  CATEGORIES.forEach(cat => {
+    const catProds = products.filter(p => p.category === cat.id);
+    const section = document.createElement('section');
+    section.className = 'menu-section';
+    section.id = 'sec-' + cat.id;
+    section.setAttribute('data-section', cat.id);
+
+    section.innerHTML = `
+      <div class="section-header">
+        <div class="section-icon">${cat.icon}</div>
+        <h2 class="section-title">${cat.label.split(' ')[0]} <span>${cat.label.split(' ').slice(1).join(' ')}</span></h2>
+        <span class="section-count">${catProds.length} Ürün</span>
+      </div>
+      <div class="product-list" id="list-${cat.id}"></div>
     `;
 
-    row.querySelector(".remove-opt-btn").addEventListener("click", () => {
-        if (optionsContainer.children.length > 1) {
-            row.remove();
-        } else {
-            alert("En az bir seçenek kalmalı.");
-        }
+    main.appendChild(section);
+
+    const list = section.querySelector('.product-list');
+    if (catProds.length === 0) {
+      list.innerHTML = '<div class="empty-state"><span class="es-icon">🫙</span>Henüz ürün eklenmedi</div>';
+    } else {
+      catProds.forEach(p => list.appendChild(createCard(p)));
+    }
+  });
+}
+
+function createCard(product) {
+  const opts      = getOpts(product.id);
+  const mainName  = nameOf(product);
+  const mainPrice = opts[0]?.price || '';
+  const imgSrc    = product.image  || 'https://placehold.co/100x100/111d38/4a6080?text=?';
+  const desc      = product.description || '';
+  const hasMulti  = opts.length > 1;
+
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.setAttribute('data-product-id', product.id);
+
+  const chipsHtml = hasMulti ? opts.slice(1).map(o =>
+    `<span class="opt-chip">${esc(o.name)} <span class="chip-price">${esc(o.price)}</span></span>`
+  ).join('') : '';
+
+  card.innerHTML = `
+    <div class="product-img-wrap">
+      <img src="${esc(imgSrc)}" alt="${esc(mainName)}" loading="lazy" onerror="this.src='https://placehold.co/100x100/111d38/4a6080?text=?'">
+    </div>
+    <div class="product-content">
+      <div class="product-info">
+        <div class="product-name">${esc(mainName)}</div>
+        ${desc ? `<div class="product-desc">${esc(desc)}</div>` : ''}
+        ${chipsHtml ? `<div class="product-options">${chipsHtml}</div>` : ''}
+      </div>
+      <div class="product-price">
+        <div class="price-main">${esc(mainPrice)}</div>
+        ${hasMulti ? '<div class="price-from">itibaren</div>' : ''}
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+    <div class="admin-card-actions">
+      <button class="admin-edit-btn" data-id="${product.id}">✏️ Düzenle</button>
+      <button class="admin-del-btn"  data-id="${product.id}">🗑️ Sil</button>
+    </div>
+  `;
+
+  /* Detail click (not on admin buttons) */
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('.admin-card-actions')) return;
+    openDetail(product, opts);
+  });
+
+  card.querySelector('.admin-edit-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openProductModal(product.id);
+  });
+  card.querySelector('.admin-del-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    deleteProduct(product.id, mainName);
+  });
+
+  return card;
+}
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════ */
+function setupScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.product-card').forEach(c => observer.observe(c));
+}
+
+/* ══════════════════════════════════════
+   CAT NAV OBSERVER
+══════════════════════════════════════ */
+function setupCatNavObserver() {
+  const navBtns = document.querySelectorAll('.cat-nav-btn');
+  const sections = document.querySelectorAll('.menu-section');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.getAttribute('data-section');
+        navBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-target') === id));
+      }
     });
-
-    optionsContainer.appendChild(row);
+  }, { threshold: 0.3 });
+  sections.forEach(s => obs.observe(s));
 }
 
-function resetModal() {
-    editingProductId = null;
-    adminModalTitle.textContent = "Yeni Ürün Ekle";
-    saveProductBtn.textContent = "Kaydet";
-    document.getElementById("newCategory").value = "doyuran";
-    document.getElementById("specialType").value = "";
-    document.getElementById("newImage").value = "";
-    document.getElementById("newDesc").value = "";
-    optionsContainer.innerHTML = "";
-    addOptionRow("", "", "");
+function scrollToSection(id) {
+  const sec = document.getElementById('sec-' + id);
+  if (!sec) return;
+  const off = 79 + 45;
+  window.scrollTo({ top: sec.getBoundingClientRect().top + window.pageYOffset - off, behavior: 'smooth' });
 }
 
-function openAddModal() {
-    resetModal();
-    adminModal.style.display = "flex";
+/* ══════════════════════════════════════
+   DETAIL MODAL
+══════════════════════════════════════ */
+function openDetail(product, opts) {
+  document.getElementById('sheetImg').src   = product.image || 'https://placehold.co/480x200/111d38/4a6080?text=?';
+  document.getElementById('sheetImg').alt   = opts[0]?.name || '';
+  document.getElementById('sheetTitle').textContent = opts[0]?.name || 'Ürün';
+  document.getElementById('sheetDesc').textContent  = product.description || '';
+  const optsEl = document.getElementById('sheetOpts');
+  optsEl.innerHTML = opts.map(o =>
+    `<div class="sheet-opt-row"><span class="sheet-opt-name">${esc(o.name)}</span><span class="sheet-opt-price">${esc(o.price)}</span></div>`
+  ).join('');
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-function closeModal() {
-    adminModal.style.display = "none";
+function closeDetail(e, force) {
+  if (force || (e && e.target === document.getElementById('detailOverlay'))) {
+    document.getElementById('detailOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(null, true); closeProductModal(); } });
 
-function getCategoryTitle(category) {
-    const map = {
-        doyuran: "Doyuran Lezzetler",
-        sicak: "Sıcak İçecekler",
-        soguk: "Soğuk İçecekler",
-        pizza: "Pizzalar",
-        kahve: "Yeni Nesil Kahve",
-        kahvalti: "Kahvaltılıklar"
-    };
-    return map[category] || "Kategori";
-}
-
-async function loadProductsFromDB() {
-    const { data: dbProducts, error: pError } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-    const { data: dbOptions, error: oError } = await supabase
-    .from("product_options")
-    .select("*");
-
-    if (pError || oError) {
-        console.error("ÜRÜN DB HATA:", pError || oError);
-        products = [];
-        return;
+/* ══════════════════════════════════════
+   LOGO DOUBLE-CLICK → ADMIN
+══════════════════════════════════════ */
+let logoClickTimer = null;
+function setupLogoDoubleClick() {
+  document.getElementById('headerLogo').addEventListener('click', () => {
+    if (logoClickTimer) {
+      clearTimeout(logoClickTimer);
+      logoClickTimer = null;
+      if (isAdmin) { openAdminPanel(); }
+      else { openPwModal(); }
+    } else {
+      logoClickTimer = setTimeout(() => { logoClickTimer = null; }, 300);
     }
-
-    products = (dbProducts || []).map(p => ({
-        id: p.id,
-        category: p.category,
-        image: p.image || "",
-        desc: p.description || "",
-        options: (dbOptions || [])
-            .filter(o => o.product_id === p.id)
-            .map(o => ({
-                id: o.id,
-                name: o.name || "",
-                price: o.price || "",
-                desc: o.description || ""
-            }))
-    }));
+  });
 }
 
-async function loadSaucesFromDB() {
-    const { data, error } = await supabase
-        .from("sauces")
-        .select("*")
-      
-
-    if (error) {
-        console.error("SOS DB HATA:", error);
-        sauces = [];
-        return;
-    }
-
-    sauces = data || [];
+/* ══════════════════════════════════════
+   PASSWORD MODAL
+══════════════════════════════════════ */
+function setupPwModal() {
+  const input  = document.getElementById('pwInput');
+  const err    = document.getElementById('pwErr');
+  document.getElementById('pwSubmitBtn').addEventListener('click', tryLogin);
+  document.getElementById('pwCancelBtn').addEventListener('click', closePwModal);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
 }
 
-async function loadSnacksFromDB() {
-    const { data, error } = await supabase
-        .from("snacks")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-    if (error) {
-        console.error("SNACK DB HATA:", error);
-        snacks = [];
-        return;
-    }
-
-    snacks = data || [];
+function openPwModal() {
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwErr').style.display = 'none';
+  document.getElementById('pwOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('pwInput').focus(), 100);
 }
 
-function renderCategories() {
-    categoryView.classList.remove("hidden-view");
-    productsView.classList.add("hidden-view");
+function closePwModal() {
+  document.getElementById('pwOverlay').classList.remove('open');
 }
 
-function renderSauces() {
-    sauceListContainer.innerHTML = "";
-
-    sauces.forEach(sauce => {
-        const div = document.createElement("div");
-        div.className = "menu-item";
-        div.style.padding = "14px";
-        div.style.marginBottom = "10px";
-
-        div.innerHTML = `
-            <div class="item-header" style="margin-bottom:0;">
-                <h3 class="item-title" style="font-size:1rem;">${escapeHtml(sauce.name)}</h3>
-                <span class="item-price">${escapeHtml(sauce.price)}</span>
-            </div>
-            <div class="extra-admin-actions">
-                <button class="extra-edit-btn">Düzenle</button>
-                <button class="extra-delete-btn">Sil</button>
-            </div>
-        `;
-
-        const editBtn = div.querySelector(".extra-edit-btn");
-        const deleteBtn = div.querySelector(".extra-delete-btn");
-
-        editBtn.addEventListener("click", async () => {
-            const newName = prompt("Yeni sos adı:", sauce.name);
-            if (newName === null) return;
-            const newPrice = prompt("Yeni fiyat:", sauce.price);
-            if (newPrice === null) return;
-
-            const { error } = await supabase
-                .from("sauces")
-                .update({ name: newName.trim(), price: newPrice.trim() })
-                .eq("id", sauce.id);
-
-            if (error) {
-                alert("Sos güncellenemedi.");
-                console.error(error);
-                return;
-            }
-
-            await loadSaucesFromDB();
-            renderSauces();
-        });
-
-        deleteBtn.addEventListener("click", async () => {
-            if (!confirm(`"${sauce.name}" silinsin mi?`)) return;
-
-            const { error } = await supabase
-                .from("sauces")
-                .delete()
-                .eq("id", sauce.id);
-
-            if (error) {
-                alert("Sos silinemedi.");
-                console.error(error);
-                return;
-            }
-
-            await loadSaucesFromDB();
-            renderSauces();
-        });
-
-        sauceListContainer.appendChild(div);
-    });
+function tryLogin() {
+  const val = document.getElementById('pwInput').value;
+  if (val === ADMIN_PASS) {
+    isAdmin = true;
+    document.body.classList.add('admin-mode');
+    closePwModal();
+    showToast('✅ Yönetici girişi başarılı');
+    openAdminPanel();
+  } else {
+    const input = document.getElementById('pwInput');
+    document.getElementById('pwErr').style.display = 'block';
+    input.classList.add('shake');
+    setTimeout(() => input.classList.remove('shake'), 400);
+  }
 }
 
-function renderSnacks() {
-    snackListContainer.innerHTML = "";
-
-    snacks.forEach(snack => {
-        const div = document.createElement("div");
-        div.className = "menu-item";
-        div.style.padding = "14px";
-        div.style.marginBottom = "10px";
-
-        div.innerHTML = `
-            <div class="item-header" style="margin-bottom:0;">
-                <h3 class="item-title" style="font-size:1rem;">${escapeHtml(snack.name)}</h3>
-                <span class="item-price">${escapeHtml(snack.price)}</span>
-            </div>
-            ${snack.description ? `<p class="item-desc" style="margin-top:8px;">${escapeHtml(snack.description)}</p>` : ""}
-            <div class="extra-admin-actions">
-                <button class="extra-edit-btn">Düzenle</button>
-                <button class="extra-delete-btn">Sil</button>
-            </div>
-        `;
-
-        const editBtn = div.querySelector(".extra-edit-btn");
-        const deleteBtn = div.querySelector(".extra-delete-btn");
-
-        editBtn.addEventListener("click", async () => {
-            const newName = prompt("Yeni atıştırmalık adı:", snack.name);
-            if (newName === null) return;
-            const newPrice = prompt("Yeni fiyat:", snack.price);
-            if (newPrice === null) return;
-            const newDesc = prompt("Yeni açıklama:", snack.description || "");
-            if (newDesc === null) return;
-
-            const { error } = await supabase
-                .from("snacks")
-                .update({
-                    name: newName.trim(),
-                    price: newPrice.trim(),
-                    description: newDesc.trim()
-                })
-                .eq("id", snack.id);
-
-            if (error) {
-                alert("Atıştırmalık güncellenemedi.");
-                console.error(error);
-                return;
-            }
-
-            await loadSnacksFromDB();
-            renderSnacks();
-        });
-
-        deleteBtn.addEventListener("click", async () => {
-            if (!confirm(`"${snack.name}" silinsin mi?`)) return;
-
-            const { error } = await supabase
-                .from("snacks")
-                .delete()
-                .eq("id", snack.id);
-
-            if (error) {
-                alert("Atıştırmalık silinemedi.");
-                console.error(error);
-                return;
-            }
-
-            await loadSnacksFromDB();
-            renderSnacks();
-        });
-
-        snackListContainer.appendChild(div);
-    });
+/* ══════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════ */
+function openAdminPanel() {
+  document.getElementById('adminPanel').classList.add('open');
+  document.getElementById('adminBackdrop').classList.add('open');
+  renderAdminList();
 }
 
-function renderProducts(category) {
-    currentCategory = category;
-
-    openSauceBtn.classList.add("hidden-view");
-    openSnackBtn.classList.add("hidden-view");
-
-    if (category === "doyuran" || category === "pizza") {
-        openSauceBtn.classList.remove("hidden-view");
-    }
-
-    if (category === "kahve" || category === "sicak") {
-        openSnackBtn.classList.remove("hidden-view");
-    }
-
-    currentCategoryTitle.textContent = getCategoryTitle(category);
-    menuGrid.innerHTML = "";
-
-    const filtered = products.filter(p => p.category === category);
-
-    filtered.forEach(product => {
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "menu-item";
-
-        const imageSrc = product.image && product.image.trim() !== "" ? product.image : "urun-gorseli.jpg";
-
-        let optionsHtml = "";
-        product.options.forEach(opt => {
-            optionsHtml += `
-                <div class="item-header">
-                    <h3 class="item-title">${escapeHtml(opt.name)}</h3>
-                    <span class="item-price">${escapeHtml(opt.price)}</span>
-                </div>
-                ${opt.desc ? `<p class="item-desc opt-desc-text">${escapeHtml(opt.desc)}</p>` : ""}
-            `;
-        });
-
-        itemDiv.innerHTML = `
-            <div class="item-img-container">
-               <img src="${escapeHtml(imageSrc)}" class="item-img" alt="${escapeHtml(product.options[0]?.name || "Ürün")}" loading="lazy" decoding="async"
-     onerror="this.src='urun-gorseli.jpg'">
-            </div>
-            ${optionsHtml}
-            ${product.desc ? `<p class="item-desc main-desc-text">${escapeHtml(product.desc)}</p>` : ""}
-            <div class="item-admin-actions">
-                <button class="edit-btn">✏️ Düzenle</button>
-                <button class="delete-btn">🗑️ Sil</button>
-            </div>
-        `;
-
-        const editBtn = itemDiv.querySelector(".edit-btn");
-        const deleteBtn = itemDiv.querySelector(".delete-btn");
-
-        editBtn.addEventListener("click", () => openEditModal(product.id));
-        deleteBtn.addEventListener("click", () => deleteProduct(product.id));
-
-        menuGrid.appendChild(itemDiv);
-    });
-
-    categoryView.classList.add("hidden-view");
-    productsView.classList.remove("hidden-view");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+function closeAdminPanel() {
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('adminBackdrop').classList.remove('open');
 }
 
-function openEditModal(productId) {
+function filterAdminCat(cat, btn) {
+  adminCatFilter = cat;
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderAdminList();
+}
+
+function renderAdminList() {
+  const list = document.getElementById('adminProductList');
+  const filtered = adminCatFilter === 'all'
+    ? products
+    : products.filter(p => p.category === adminCatFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state"><span class="es-icon">🫙</span>Bu kategoride ürün yok</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(p => {
+    const opts    = getOpts(p.id);
+    const name    = nameOf(p);
+    const cat     = CATEGORIES.find(c => c.id === p.category);
+    const imgSrc  = p.image || 'https://placehold.co/52x52/111d38/4a6080?text=?';
+    return `
+      <div class="admin-item">
+        <img class="admin-item-img" src="${esc(imgSrc)}" alt="${esc(name)}" onerror="this.src='https://placehold.co/52x52/111d38/4a6080?text=?'">
+        <div class="admin-item-info">
+          <div class="admin-item-name">${esc(name)}</div>
+          <div class="admin-item-cat">${cat?.icon} ${cat?.label}</div>
+        </div>
+        <div class="admin-item-btns">
+          <button class="a-edit" onclick="openProductModal('${p.id}')">✏️</button>
+          <button class="a-del"  onclick="deleteProduct('${p.id}','${esc(name)}')">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   ADD / EDIT MODAL
+══════════════════════════════════════ */
+function openProductModal(productId) {
+  currentUploadUrl = '';
+  const isEdit = !!productId;
+  document.getElementById('editProductId').value  = productId || '';
+  document.getElementById('modalTitleText').textContent = isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle';
+  document.getElementById('modalTitleIcon').textContent = isEdit ? '✏️' : '✦';
+
+  // Reset image area
+  const area    = document.getElementById('imgUploadArea');
+  const preview = document.getElementById('imgPreview');
+  const fileInp = document.getElementById('imgFileInput');
+  area.classList.remove('has-img','uploading');
+  preview.src   = '';
+  preview.style.display = 'none';
+  fileInp.value = '';
+  document.getElementById('fImageUrl').value = '';
+
+  // Reset options
+  document.getElementById('optionsContainer').innerHTML = '';
+  document.getElementById('fDescription').value = '';
+
+  if (isEdit) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
-
-    editingProductId = productId;
-    adminModalTitle.textContent = "Ürünü Güncelle";
-    saveProductBtn.textContent = "Güncelle";
-
-    document.getElementById("newCategory").value = product.category;
-    document.getElementById("specialType").value = "";
-    document.getElementById("newImage").value = product.image || "";
-    document.getElementById("newDesc").value = product.desc || "";
-
-    optionsContainer.innerHTML = "";
-    if (product.options.length > 0) {
-        product.options.forEach(opt => addOptionRow(opt.name, opt.price, opt.desc || ""));
+    document.getElementById('fCategory').value    = product.category;
+    document.getElementById('fDescription').value = product.description || '';
+    if (product.image) {
+      currentUploadUrl = product.image;
+      document.getElementById('fImageUrl').value  = product.image;
+      preview.src     = product.image;
+      preview.style.display = 'block';
+      area.classList.add('has-img');
+    }
+    const opts = getOpts(productId);
+    if (opts.length > 0) {
+      opts.forEach(o => addOptionRow(o.name, o.price));
     } else {
-        addOptionRow("", "", "");
+      /* product_options boş gelse bile mevcut ismi göster */
+      addOptionRow(nameOf(product), '');
     }
+  } else {
+    addOptionRow();
+  }
 
-    adminModal.style.display = "flex";
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-async function deleteProduct(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    const productName = product.options?.[0]?.name || "Bu ürün";
-    if (!confirm(`"${productName}" adlı ürünü silmek istediğine emin misin?`)) return;
-
-    const { error: optErr } = await supabase
-        .from("product_options")
-        .delete()
-        .eq("product_id", productId);
-
-    if (optErr) {
-        alert("Ürün seçenekleri silinemedi.");
-        console.error(optErr);
-        return;
-    }
-
-    const { error: prodErr } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", productId);
-
-    if (prodErr) {
-        alert("Ürün silinemedi.");
-        console.error(prodErr);
-        return;
-    }
-
-    await loadProductsFromDB();
-    if (currentCategory) renderProducts(currentCategory);
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-function collectFormData() {
-    const category = document.getElementById("newCategory").value;
-    const image = document.getElementById("newImage").value.trim();
-    const desc = document.getElementById("newDesc").value.trim();
-
-    const optionRows = document.querySelectorAll(".option-row");
-    const options = [];
-
-    optionRows.forEach(row => {
-        const name = row.querySelector(".opt-name").value.trim();
-        const price = row.querySelector(".opt-price").value.trim();
-        const optDesc = row.querySelector(".opt-desc").value.trim();
-
-        if (name !== "" && price !== "") {
-            options.push({
-                name,
-                price,
-                desc: optDesc
-            });
-        }
-    });
-
-    if (options.length === 0) {
-        alert("En az bir ürün adı ve fiyat girmelisin.");
-        return null;
-    }
-
-    return { category, image, desc, options };
+function addOptionRow(nameVal = '', priceVal = '') {
+  const container = document.getElementById('optionsContainer');
+  const row = document.createElement('div');
+  row.className = 'option-row';
+  row.innerHTML = `
+    <input type="text" class="form-input opt-name-input" placeholder="Ürün adı (ör: Normal Porsiyon)" value="${esc(nameVal)}">
+    <input type="text" class="form-input opt-price-input" placeholder="Fiyat (ör: 140 TL)" style="max-width:120px" value="${esc(priceVal)}">
+    <button type="button" class="opt-remove-btn" title="Kaldır">×</button>
+  `;
+  row.querySelector('.opt-remove-btn').addEventListener('click', () => {
+    if (container.children.length > 1) row.remove();
+    else showToast('En az bir seçenek gerekli', true);
+  });
+  container.appendChild(row);
 }
 
-async function saveOrUpdateProduct() {
-    const specialType = document.getElementById("specialType").value;
-
-    if (specialType === "sauce") {
-        const name = prompt("Sos adı:");
-        const price = prompt("Fiyat:");
-
-        if (!name || !price) return;
-
-        const { error } = await supabase
-            .from("sauces")
-            .insert([{ name: name.trim(), price: price.trim() }]);
-
-        if (error) {
-            alert("Sos eklenemedi.");
-            console.error(error);
-            return;
-        }
-
-        await loadSaucesFromDB();
-        alert("Sos eklendi");
-        closeModal();
-        return;
-    }
-
-    if (specialType === "snack") {
-        const name = prompt("Atıştırmalık adı:");
-        const price = prompt("Fiyat:");
-        const description = prompt("Açıklama:");
-
-        if (!name || !price) return;
-
-        const { error } = await supabase
-            .from("snacks")
-            .insert([{ name: name.trim(), price: price.trim(), description: (description || "").trim() }]);
-
-        if (error) {
-            alert("Atıştırmalık eklenemedi.");
-            console.error(error);
-            return;
-        }
-
-        await loadSnacksFromDB();
-        alert("Atıştırmalık eklendi");
-        closeModal();
-        return;
-    }
-
-    const formData = collectFormData();
-    if (!formData) return;
-
-    if (editingProductId) {
-        const { error: prodErr } = await supabase
-            .from("products")
-            .update({
-                category: formData.category,
-                image: formData.image,
-                description: formData.desc
-            })
-            .eq("id", editingProductId);
-
-        if (prodErr) {
-            alert("Ürün güncellenemedi.");
-            console.error(prodErr);
-            return;
-        }
-
-        const { error: delOptErr } = await supabase
-            .from("product_options")
-            .delete()
-            .eq("product_id", editingProductId);
-
-        if (delOptErr) {
-            alert("Eski seçenekler silinemedi.");
-            console.error(delOptErr);
-            return;
-        }
-
-        const optionRows = formData.options.map(opt => ({
-            product_id: editingProductId,
-            name: opt.name,
-            price: opt.price,
-            description: opt.desc
-        }));
-
-        const { error: insOptErr } = await supabase
-            .from("product_options")
-            .insert(optionRows);
-
-        if (insOptErr) {
-            alert("Yeni seçenekler eklenemedi.");
-            console.error(insOptErr);
-            return;
-        }
-
-        await loadProductsFromDB();
-        closeModal();
-        if (currentCategory) renderProducts(currentCategory);
-        return;
-    }
-
-    const { data: insertedProduct, error: prodErr } = await supabase
-        .from("products")
-        .insert([{
-            category: formData.category,
-            image: formData.image,
-            description: formData.desc
-        }])
-        .select()
-        .single();
-
-    if (prodErr || !insertedProduct) {
-        alert("Ürün eklenemedi.");
-        console.error(prodErr);
-        return;
-    }
-
-    const optionRows = formData.options.map(opt => ({
-        product_id: insertedProduct.id,
-        name: opt.name,
-        price: opt.price,
-        description: opt.desc
-    }));
-
-    const { error: optErr } = await supabase
-        .from("product_options")
-        .insert(optionRows);
-
-    if (optErr) {
-        alert("Ürün seçenekleri eklenemedi.");
-        console.error(optErr);
-        return;
-    }
-
-    await loadProductsFromDB();
-    closeModal();
-    if (currentCategory) renderProducts(currentCategory);
-}
-
-categoryCards.forEach(card => {
-    card.addEventListener("click", () => {
-        const selectedCategory = card.getAttribute("data-category");
-        renderProducts(selectedCategory);
-    });
-});
-
-backToCategoriesBtn.addEventListener("click", () => {
-    renderCategories();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-openSauceBtn.addEventListener("click", () => {
-    renderSauces();
-    sauceModal.style.display = "flex";
-});
-
-closeSauceBtn.addEventListener("click", () => {
-    sauceModal.style.display = "none";
-});
-
-openSnackBtn.addEventListener("click", () => {
-    renderSnacks();
-    snackModal.style.display = "flex";
-});
-
-closeSnackBtn.addEventListener("click", () => {
-    snackModal.style.display = "none";
-});
-
-let clickTimer = null;
-
-logoImg.addEventListener("click", () => {
-    if (clickTimer) {
-        // 👉 ÇİFT TIK
-        clearTimeout(clickTimer);
-        clickTimer = null;
-
-        const password = prompt("Yönetici şifresini gir:");
-        if (password === null) return;
-
-        if (password === ADMIN_PASSWORD) {
-            body.classList.add("admin-mode");
-            alert("Yönetici girişi başarılı.");
-        } else {
-            alert("Şifre yanlış.");
-        }
-
-    } else {
-        // 👉 TEK TIK
-        clickTimer = setTimeout(() => {
-            renderCategories(); // kategorilere dön
-            window.scrollTo({ top: 0, behavior: "smooth" });
-            clickTimer = null;
-        }, 250); // 250ms bekler (çift tık kontrolü için)
-    }
-});
-
-logoutBtn.addEventListener("click", () => {
-    body.classList.remove("admin-mode");
-    alert("Yönetici modundan çıkış yapıldı.");
-});
-
-openAddModalBtn.addEventListener("click", openAddModal);
-closeAdminBtn.addEventListener("click", closeModal);
-addOptionBtn.addEventListener("click", () => addOptionRow("", "", ""));
-saveProductBtn.addEventListener("click", saveOrUpdateProduct);
-
-window.addEventListener("click", (e) => {
-    if (e.target === adminModal) closeModal();
-    if (e.target === sauceModal) sauceModal.style.display = "none";
-    if (e.target === snackModal) snackModal.style.display = "none";
-});
-    closeAdBtn.addEventListener("click", () => {
-    welcomeAdVideo.pause();
-    welcomeAdModal.style.display = "none";
-});
-
-welcomeAdModal.addEventListener("click", (e) => {
-    if (e.target === welcomeAdModal) {
-        welcomeAdVideo.pause();
-        welcomeAdModal.style.display = "none";
-    }
-});
-welcomeAdVideo.addEventListener("ended", () => {
-    welcomeAdModal.style.display = "none";
-});
-if (localStorage.getItem("theme") === "dark") {
-    body.classList.add("dark-mode");
-    themeToggleBtn.innerText = "☀️";
-}
-
-themeToggleBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-
-    if (body.classList.contains("dark-mode")) {
-        localStorage.setItem("theme", "dark");
-        themeToggleBtn.innerText = "☀️";
-    } else {
-        localStorage.setItem("theme", "light");
-        themeToggleBtn.innerText = "🌙";
-    }
-});
-    document.getElementById("imageUpload").addEventListener("change", async function () {
-    const file = this.files[0];
+/* ─── Image Upload ─── */
+function setupImageUpload() {
+  const fileInp = document.getElementById('imgFileInput');
+  fileInp.addEventListener('change', async () => {
+    const file = fileInp.files[0];
     if (!file) return;
+    await handleImageUpload(file);
+  });
+}
 
-    const url = await uploadAndResizeImage(file);
+async function handleImageUpload(file) {
+  const area    = document.getElementById('imgUploadArea');
+  const preview = document.getElementById('imgPreview');
 
-    if (url) {
-        document.getElementById("newImage").value = url;
+  // Show local preview immediately
+  const localUrl = URL.createObjectURL(file);
+  preview.src    = localUrl;
+  preview.style.display = 'block';
+
+  area.classList.add('uploading');
+  area.classList.remove('has-img');
+
+  try {
+    // Compress to WebP via canvas
+    const compressed = await compressImage(file);
+    const fileName   = `products/${Date.now()}.webp`;
+
+    const { data, error } = await db.storage.from(BUCKET).upload(fileName, compressed, {
+      contentType: 'image/webp',
+      cacheControl: '31536000',
+      upsert: true,
+    });
+
+    if (error) throw error;
+
+    const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(data.path);
+    currentUploadUrl = urlData.publicUrl;
+    document.getElementById('fImageUrl').value = currentUploadUrl;
+
+    preview.src = currentUploadUrl;
+    area.classList.remove('uploading');
+    area.classList.add('has-img');
+    showToast('✅ Görsel yüklendi');
+  } catch (err) {
+    console.error(err);
+    area.classList.remove('uploading', 'has-img');
+    showToast('❌ Görsel yüklenemedi: ' + (err.message || err), true);
+  }
+}
+
+function compressImage(file) {
+  return new Promise((resolve) => {
+    const img    = new Image();
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; };
+    img.onload = () => {
+      const maxW   = 800;
+      const scale  = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width  = img.width  * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob => resolve(blob), 'image/webp', 0.82);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ─── Save Product ─── */
+async function saveProduct() {
+  const btn      = document.getElementById('saveProductBtn');
+  const productId= document.getElementById('editProductId').value;
+  const isEdit   = !!productId;
+  const category = document.getElementById('fCategory').value;
+  const imageUrl = document.getElementById('fImageUrl').value.trim();
+  const desc     = document.getElementById('fDescription').value.trim();
+
+  // Collect options
+  const rows = document.querySelectorAll('#optionsContainer .option-row');
+  const opts = [];
+  rows.forEach(row => {
+    const name  = row.querySelector('.opt-name-input').value.trim();
+    const price = row.querySelector('.opt-price-input').value.trim();
+    if (name && price) opts.push({ name, price });
+  });
+
+  if (opts.length === 0) return showToast('En az bir ürün adı ve fiyat girin', true);
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Kaydediliyor…';
+
+  try {
+    if (isEdit) {
+      /* Update product */
+      const { error: pErr } = await db.from('products')
+        .update({ category, image: imageUrl, description: desc })
+        .eq('id', productId);
+      if (pErr) throw pErr;
+
+      /* Delete old options */
+      const { error: dErr } = await db.from('product_options').delete().eq('product_id', productId);
+      if (dErr) throw dErr;
+
+      /* Insert new options */
+      const newOpts = opts.map(o => ({ product_id: productId, name: o.name, price: o.price }));
+      const { error: iErr } = await db.from('product_options').insert(newOpts);
+      if (iErr) throw iErr;
+
+      showToast('✅ Ürün güncellendi');
+    } else {
+      /* Insert product */
+      const { data: newP, error: pErr } = await db.from('products')
+        .insert([{ category, image: imageUrl, description: desc }])
+        .select().single();
+      if (pErr) throw pErr;
+
+      /* Insert options */
+      const newOpts = opts.map(o => ({ product_id: newP.id, name: o.name, price: o.price }));
+      const { error: iErr } = await db.from('product_options').insert(newOpts);
+      if (iErr) throw iErr;
+
+      showToast('✅ Ürün eklendi');
     }
-});
 
-await loadProductsFromDB();
-await loadSnacksFromDB();
-await loadSaucesFromDB();
-renderCategories();
+    /* Reload and re-render */
+    await loadData();
+    renderMainMenu();
+    setupScrollReveal();
+    setupCatNavObserver();
+    renderAdminList();
+    closeProductModal();
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Hata: ' + (err.message || JSON.stringify(err)), true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Kaydet';
+  }
+}
+
+/* ─── Delete Product ─── */
+async function deleteProduct(productId, name) {
+  if (!confirm(`"${name}" adlı ürünü silmek istediğinize emin misiniz?`)) return;
+
+  try {
+    const { error: oErr } = await db.from('product_options').delete().eq('product_id', productId);
+    if (oErr) throw oErr;
+    const { error: pErr } = await db.from('products').delete().eq('id', productId);
+    if (pErr) throw pErr;
+
+    showToast('🗑️ Ürün silindi');
+    await loadData();
+    renderMainMenu();
+    setupScrollReveal();
+    setupCatNavObserver();
+    renderAdminList();
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Silinemedi: ' + (err.message || ''), true);
+  }
+}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ──── Helpers ──── */
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+/* Ürün adını belirle: önce product_options, yoksa resim dosya adından üret */
+function nameOf(product) {
+  const opts = getOpts(product.id);
+  if (opts[0]?.name) return opts[0].name;
+  /* Resim URL'sinden dosya adı çıkar ve formatla */
+  if (product.image) {
+    const file = product.image.split('/').pop().replace(/\.[^.]+$/, '');
+    /* camelCase / bitişik kelimeleri ayır, baş harf büyüt */
+    return file
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+  return product.description?.split(' ').slice(0,3).join(' ') || '—';
+}
+
+/* ── Run ── */
+init();
 </script>
-
 </body>
 </html>
