@@ -225,12 +225,12 @@ body.admin-mode .admin-card-actions{display:flex}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.error{background:linear-gradient(135deg,#7f1d1d,#ef4444);box-shadow:0 8px 24px rgba(239,68,68,.3)}
 
-/* WELCOME AD */
-#welcomeAd{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
-.ad-content{position:relative;max-width:420px;width:100%;background:rgba(30,58,138,.08);border:1px solid rgba(30,58,138,.3);border-radius:24px;padding:8px;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 60px rgba(30,58,138,.15)}
-.ad-video{width:100%;border-radius:18px;max-height:calc(85vh - 40px);object-fit:contain;display:block}
-.ad-close{position:absolute;top:-10px;right:-10px;width:36px;height:36px;background:#ef4444;color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);transition:transform .3s}
-.ad-close:hover{transform:scale(1.1) rotate(90deg)}
+/* WELCOME PROMO */
+#welcomeScreen{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
+.promo-content{position:relative;max-width:420px;width:100%;background:rgba(30,58,138,.08);border:1px solid rgba(30,58,138,.3);border-radius:24px;padding:8px;box-shadow:0 40px 80px rgba(0,0,0,.8),0 0 60px rgba(30,58,138,.15)}
+.promo-video{width:100%;border-radius:18px;max-height:calc(85vh - 40px);object-fit:contain;display:block}
+.promo-close{position:absolute;top:-10px;right:-10px;width:36px;height:36px;background:#ef4444;color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);transition:transform .3s}
+.promo-close:hover{transform:scale(1.1) rotate(90deg)}
 
 /* FOOTER */
 footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
@@ -267,12 +267,12 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
 </head>
 <body>
 
-<!-- WELCOME AD -->
-<div id="welcomeAd">
-  <div class="ad-content">
-    <button class="ad-close" id="adCloseBtn">&times;</button>
-    <video class="ad-video" autoplay muted loop playsinline>
-      <source src="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/reklammp4.mp4" type="video/mp4">
+<!-- WELCOME PROMO -->
+<div id="welcomeScreen">
+  <div class="promo-content">
+    <button class="promo-close" id="promoCloseBtn">&times;</button>
+    <video class="promo-video" autoplay muted loop playsinline>
+      <source src="reklammp4.mp4" type="video/mp4">
     </video>
   </div>
 </div>
@@ -280,7 +280,7 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
 <!-- HEADER -->
 <header>
   <div class="header-inner">
-    <img src="https://gojphwhnmvmkpawriofu.supabase.co/storage/v1/object/public/menu-images/logo.png"
+    <img src="logo.png"
          alt="Öz Serap Kantin Plus Logosu" class="header-logo" id="headerLogo"
          title="Admin girişi için çift tıklayın">
     <div class="header-brand">
@@ -310,7 +310,7 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
 <!-- FOOTER -->
 <footer>
   <div class="footer-text">
-    <span class="brand">MADE BY</span> — Oğuzhan Yavaş
+    <span class="brand">Öz Serap Kantin Plus</span> — Taze Lezzetler
   </div>
 </footer>
 
@@ -438,15 +438,26 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
 
 <!-- ========== SCRIPTS ========== -->
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc, addDoc, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
 
-/* ─── Supabase init ─── */
-const SUPA_URL  = 'https://gojphwhnmvmkpawriofu.supabase.co';
-const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvanBod2hubXZta3Bhd3Jpb2Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIyNjQsImV4cCI6MjA5MTY3ODI2NH0.5PgZKZjOaWbZfIZdDIGMNyw4mhj2-3SwjsJMVWaLSjg';
-const db        = createClient(SUPA_URL, SUPA_KEY);
+/* ─── Firebase init ─── */
+const firebaseConfig = {
+  apiKey: "AIzaSyBgrYG6TuoqQ7yG90Lwv7UnNH0ZWt6yMIk",
+  authDomain: "ozserap-menu.firebaseapp.com",
+  databaseURL: "https://ozserap-menu-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "ozserap-menu",
+  storageBucket: "ozserap-menu.firebasestorage.app",
+  messagingSenderId: "722778923926",
+  appId: "1:722778923926:web:ba4d370ace4b119ebef3b7",
+  measurementId: "G-Y41CP1ZN59"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
 const ADMIN_PASS = 'admin123';
-const BUCKET     = 'menu-images';
 
 /* ─── State ─── */
 let products    = [];
@@ -477,12 +488,12 @@ window.saveProduct      = saveProduct;
 /* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
-const welcomeAd = document.getElementById('welcomeAd');
-document.getElementById('adCloseBtn').addEventListener('click', () => {
-  welcomeAd.style.display = 'none';
+const welcomeScreen = document.getElementById('welcomeScreen');
+document.getElementById('promoCloseBtn').addEventListener('click', () => {
+  welcomeScreen.style.display = 'none';
 });
-welcomeAd.addEventListener('click', (e) => {
-  if (e.target === welcomeAd) welcomeAd.style.display = 'none';
+welcomeScreen.addEventListener('click', (e) => {
+  if (e.target === welcomeScreen) welcomeScreen.style.display = 'none';
 });
 
 async function init() {
@@ -496,12 +507,18 @@ async function init() {
 }
 
 async function loadData() {
-  const [{ data: prods }, { data: opts }] = await Promise.all([
-    db.from('products').select('*'),
-    db.from('product_options').select('*'),
-  ]);
-  products   = prods   || [];
-  allOptions = opts    || [];
+  try {
+    const [prodsSnap, optsSnap] = await Promise.all([
+      getDocs(collection(db, "products")),
+      getDocs(collection(db, "product_options"))
+    ]);
+    products = prodsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    allOptions = optsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error("Veri yükleme hatası:", err);
+    products = [];
+    allOptions = [];
+  }
 }
 
 function getOpts(productId) {
@@ -862,17 +879,11 @@ async function handleImageUpload(file) {
     // Compress to WebP via canvas
     const compressed = await compressImage(file);
     const fileName   = `products/${Date.now()}.webp`;
-
-    const { data, error } = await db.storage.from(BUCKET).upload(fileName, compressed, {
-      contentType: 'image/webp',
-      cacheControl: '31536000',
-      upsert: true,
-    });
-
-    if (error) throw error;
-
-    const { data: urlData } = db.storage.from(BUCKET).getPublicUrl(data.path);
-    currentUploadUrl = urlData.publicUrl;
+    
+    const storageRef = ref(storage, fileName);
+    await uploadBytes(storageRef, compressed, { contentType: 'image/webp', cacheControl: 'public,max-age=31536000' });
+    
+    currentUploadUrl = await getDownloadURL(storageRef);
     document.getElementById('fImageUrl').value = currentUploadUrl;
 
     preview.src = currentUploadUrl;
@@ -930,32 +941,38 @@ async function saveProduct() {
   try {
     if (isEdit) {
       /* Update product */
-      const { error: pErr } = await db.from('products')
-        .update({ category, image: imageUrl, description: desc })
-        .eq('id', productId);
-      if (pErr) throw pErr;
+      await updateDoc(doc(db, "products", productId), {
+        category, image: imageUrl, description: desc
+      });
 
-      /* Delete old options */
-      const { error: dErr } = await db.from('product_options').delete().eq('product_id', productId);
-      if (dErr) throw dErr;
+      /* Fetch and delete old options */
+      const batch = writeBatch(db);
+      const optsSnap = await getDocs(collection(db, "product_options"));
+      optsSnap.docs.forEach(d => {
+        if (d.data().product_id === productId) batch.delete(d.ref);
+      });
 
       /* Insert new options */
-      const newOpts = opts.map(o => ({ product_id: productId, name: o.name, price: o.price }));
-      const { error: iErr } = await db.from('product_options').insert(newOpts);
-      if (iErr) throw iErr;
+      opts.forEach(o => {
+        const newOptRef = doc(collection(db, "product_options"));
+        batch.set(newOptRef, { product_id: productId, name: o.name, price: o.price });
+      });
+      await batch.commit();
 
       showToast('✅ Ürün güncellendi');
     } else {
       /* Insert product */
-      const { data: newP, error: pErr } = await db.from('products')
-        .insert([{ category, image: imageUrl, description: desc }])
-        .select().single();
-      if (pErr) throw pErr;
+      const docRef = await addDoc(collection(db, "products"), {
+        category, image: imageUrl, description: desc
+      });
 
       /* Insert options */
-      const newOpts = opts.map(o => ({ product_id: newP.id, name: o.name, price: o.price }));
-      const { error: iErr } = await db.from('product_options').insert(newOpts);
-      if (iErr) throw iErr;
+      const batch = writeBatch(db);
+      opts.forEach(o => {
+        const newOptRef = doc(collection(db, "product_options"));
+        batch.set(newOptRef, { product_id: docRef.id, name: o.name, price: o.price });
+      });
+      await batch.commit();
 
       showToast('✅ Ürün eklendi');
     }
@@ -981,10 +998,13 @@ async function deleteProduct(productId, name) {
   if (!confirm(`"${name}" adlı ürünü silmek istediğinize emin misiniz?`)) return;
 
   try {
-    const { error: oErr } = await db.from('product_options').delete().eq('product_id', productId);
-    if (oErr) throw oErr;
-    const { error: pErr } = await db.from('products').delete().eq('id', productId);
-    if (pErr) throw pErr;
+    const batch = writeBatch(db);
+    const optsSnap = await getDocs(collection(db, "product_options"));
+    optsSnap.docs.forEach(d => {
+      if (d.data().product_id === productId) batch.delete(d.ref);
+    });
+    batch.delete(doc(db, "products", productId));
+    await batch.commit();
 
     showToast('🗑️ Ürün silindi');
     await loadData();
