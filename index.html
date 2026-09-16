@@ -67,9 +67,9 @@ main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:32px 20px
 .product-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .5s ease}
 .product-card:hover .product-img-wrap img{transform:scale(1.08)}
 .product-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,rgba(10,15,30,.5));pointer-events:none}
-.product-content{flex:1;padding:14px 16px;display:flex;align-items:center;gap:12px;min-width:0}
+.product-content{flex:1;padding:12px 14px;display:flex;align-items:center;gap:10px;min-width:0}
 .product-info{flex:1;min-width:0}
-.product-name{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-name{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-wrap:break-word}
 .product-desc{font-size:.74rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .product-options{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .opt-chip{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:50px;background:rgba(30,58,138,.12);border:1px solid rgba(30,58,138,.25);color:var(--text-sub);white-space:nowrap}
@@ -304,7 +304,7 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
 <!-- FOOTER -->
 <footer>
   <div class="footer-text">
-    <span class="brand">MADE BY </span> —  Oğuzhan Yavaş   
+    <span class="brand">Öz Serap Kantin Plus</span> — Taze Lezzetler
   </div>
 </footer>
 
@@ -471,8 +471,12 @@ window.saveProduct      = saveProduct;
 /* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
+const welcomeAd = document.getElementById('welcomeAd');
 document.getElementById('adCloseBtn').addEventListener('click', () => {
-  document.getElementById('welcomeAd').style.display = 'none';
+  welcomeAd.style.display = 'none';
+});
+welcomeAd.addEventListener('click', (e) => {
+  if (e.target === welcomeAd) welcomeAd.style.display = 'none';
 });
 
 async function init() {
