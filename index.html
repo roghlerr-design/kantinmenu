@@ -437,25 +437,14 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
 <div class="toast" id="toast"></div>
 
 <!-- ========== SCRIPTS ========== -->
+<!-- ========== SCRIPTS ========== -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc, addDoc, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-/* ─── Firebase init ─── */
-const firebaseConfig = {
-  apiKey: "AIzaSyBgrYG6TuoqQ7yG90Lwv7UnNH0ZWt6yMIk",
-  authDomain: "ozserap-menu.firebaseapp.com",
-  databaseURL: "https://ozserap-menu-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "ozserap-menu",
-  storageBucket: "ozserap-menu.firebasestorage.app",
-  messagingSenderId: "722778923926",
-  appId: "1:722778923926:web:ba4d370ace4b119ebef3b7",
-  measurementId: "G-Y41CP1ZN59"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+/* ─── Supabase init ─── */
+const supabaseUrl = 'https://uuxjxiqdhbsbdogtgpri.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1eGp4aXFkaGJzYmRvZ3RncHJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NTAwODUsImV4cCI6MjEwNTIyNjA4NX0.6CCV7hAw4t8sv0Wo9F474Y1-zHR2zsYhQspgDujT4nQ';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const ADMIN_PASS = 'admin123';
 
@@ -470,9 +459,9 @@ const CATEGORIES = [
   { id:'doyuran', label:'Doyuran Lezzetler', icon:'🍔' },
   { id:'sicak',   label:'Sıcak İçecekler',   icon:'☕' },
   { id:'soguk',   label:'Soğuk İçecekler',   icon:'🥤' },
-  { id:'pizza',   label:'Pizzalar',           icon:'🍕' },
-  { id:'kahve',   label:'Yeni Nesil Kahve',   icon:'☕' },
-  { id:'kahvalti',label:'Kahvaltılıklar',     icon:'🥐' },
+  { id:'pizza',   label:'Pizzalar',          icon:'🍕' },
+  { id:'kahve',   label:'Yeni Nesil Kahve',  icon:'☕' },
+  { id:'kahvalti',label:'Kahvaltılıklar',    icon:'🥐' },
 ];
 
 /* ─── Expose globals for onclick attrs ─── */
@@ -508,12 +497,14 @@ async function init() {
 
 async function loadData() {
   try {
-    const [prodsSnap, optsSnap] = await Promise.all([
-      getDocs(collection(db, "products")),
-      getDocs(collection(db, "product_options"))
-    ]);
-    products = prodsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    allOptions = optsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const { data: prods, error: pErr } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+    if (pErr) throw pErr;
+    
+    const { data: opts, error: oErr } = await supabase.from('product_options').select('*');
+    if (oErr) throw oErr;
+    
+    products = prods || [];
+    allOptions = opts || [];
   } catch (err) {
     console.error("Veri yükleme hatası:", err);
     products = [];
@@ -597,7 +588,6 @@ function createCard(product) {
     </div>
   `;
 
-  /* Detail click (not on admin buttons) */
   card.addEventListener('click', (e) => {
     if (e.target.closest('.admin-card-actions')) return;
     openDetail(product, opts);
@@ -615,9 +605,6 @@ function createCard(product) {
   return card;
 }
 
-/* ══════════════════════════════════════
-   SCROLL REVEAL
-══════════════════════════════════════ */
 function setupScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
@@ -625,9 +612,6 @@ function setupScrollReveal() {
   document.querySelectorAll('.product-card').forEach(c => observer.observe(c));
 }
 
-/* ══════════════════════════════════════
-   CAT NAV OBSERVER
-══════════════════════════════════════ */
 function setupCatNavObserver() {
   const navBtns = document.querySelectorAll('.cat-nav-btn');
   const sections = document.querySelectorAll('.menu-section');
@@ -649,9 +633,6 @@ function scrollToSection(id) {
   window.scrollTo({ top: sec.getBoundingClientRect().top + window.pageYOffset - off, behavior: 'smooth' });
 }
 
-/* ══════════════════════════════════════
-   DETAIL MODAL
-══════════════════════════════════════ */
 function openDetail(product, opts) {
   document.getElementById('sheetImg').src   = product.image || 'https://placehold.co/480x200/111d38/4a6080?text=?';
   document.getElementById('sheetImg').alt   = opts[0]?.name || '';
@@ -673,9 +654,6 @@ function closeDetail(e, force) {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(null, true); closeProductModal(); } });
 
-/* ══════════════════════════════════════
-   LOGO DOUBLE-CLICK → ADMIN
-══════════════════════════════════════ */
 let logoClickTimer = null;
 function setupLogoDoubleClick() {
   document.getElementById('headerLogo').addEventListener('click', () => {
@@ -690,12 +668,8 @@ function setupLogoDoubleClick() {
   });
 }
 
-/* ══════════════════════════════════════
-   PASSWORD MODAL
-══════════════════════════════════════ */
 function setupPwModal() {
   const input  = document.getElementById('pwInput');
-  const err    = document.getElementById('pwErr');
   document.getElementById('pwSubmitBtn').addEventListener('click', tryLogin);
   document.getElementById('pwCancelBtn').addEventListener('click', closePwModal);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
@@ -728,9 +702,6 @@ function tryLogin() {
   }
 }
 
-/* ══════════════════════════════════════
-   ADMIN PANEL
-══════════════════════════════════════ */
 function openAdminPanel() {
   document.getElementById('adminPanel').classList.add('open');
   document.getElementById('adminBackdrop').classList.add('open');
@@ -761,7 +732,6 @@ function renderAdminList() {
   }
 
   list.innerHTML = filtered.map(p => {
-    const opts    = getOpts(p.id);
     const name    = nameOf(p);
     const cat     = CATEGORIES.find(c => c.id === p.category);
     const imgSrc  = p.image || 'https://placehold.co/52x52/111d38/4a6080?text=?';
@@ -781,9 +751,6 @@ function renderAdminList() {
   }).join('');
 }
 
-/* ══════════════════════════════════════
-   ADD / EDIT MODAL
-══════════════════════════════════════ */
 function openProductModal(productId) {
   currentUploadUrl = '';
   const isEdit = !!productId;
@@ -791,7 +758,6 @@ function openProductModal(productId) {
   document.getElementById('modalTitleText').textContent = isEdit ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle';
   document.getElementById('modalTitleIcon').textContent = isEdit ? '✏️' : '✦';
 
-  // Reset image area
   const area    = document.getElementById('imgUploadArea');
   const preview = document.getElementById('imgPreview');
   const fileInp = document.getElementById('imgFileInput');
@@ -801,7 +767,6 @@ function openProductModal(productId) {
   fileInp.value = '';
   document.getElementById('fImageUrl').value = '';
 
-  // Reset options
   document.getElementById('optionsContainer').innerHTML = '';
   document.getElementById('fDescription').value = '';
 
@@ -821,7 +786,6 @@ function openProductModal(productId) {
     if (opts.length > 0) {
       opts.forEach(o => addOptionRow(o.name, o.price));
     } else {
-      /* product_options boş gelse bile mevcut ismi göster */
       addOptionRow(nameOf(product), '');
     }
   } else {
@@ -853,7 +817,6 @@ function addOptionRow(nameVal = '', priceVal = '') {
   container.appendChild(row);
 }
 
-/* ─── Image Upload ─── */
 function setupImageUpload() {
   const fileInp = document.getElementById('imgFileInput');
   fileInp.addEventListener('change', async () => {
@@ -867,7 +830,6 @@ async function handleImageUpload(file) {
   const area    = document.getElementById('imgUploadArea');
   const preview = document.getElementById('imgPreview');
 
-  // Show local preview immediately
   const localUrl = URL.createObjectURL(file);
   preview.src    = localUrl;
   preview.style.display = 'block';
@@ -876,14 +838,20 @@ async function handleImageUpload(file) {
   area.classList.remove('has-img');
 
   try {
-    // Compress to WebP via canvas
     const compressed = await compressImage(file);
-    const fileName   = `products/${Date.now()}.webp`;
+    const fileName   = `${Date.now()}.webp`;
     
-    const storageRef = ref(storage, fileName);
-    await uploadBytes(storageRef, compressed, { contentType: 'image/webp', cacheControl: 'public,max-age=31536000' });
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(fileName, compressed, { contentType: 'image/webp' });
+      
+    if (error) throw error;
     
-    currentUploadUrl = await getDownloadURL(storageRef);
+    const { data: publicUrlData } = supabase.storage
+      .from('images')
+      .getPublicUrl(fileName);
+      
+    currentUploadUrl = publicUrlData.publicUrl;
     document.getElementById('fImageUrl').value = currentUploadUrl;
 
     preview.src = currentUploadUrl;
@@ -915,7 +883,6 @@ function compressImage(file) {
   });
 }
 
-/* ─── Save Product ─── */
 async function saveProduct() {
   const btn      = document.getElementById('saveProductBtn');
   const productId= document.getElementById('editProductId').value;
@@ -924,7 +891,6 @@ async function saveProduct() {
   const imageUrl = document.getElementById('fImageUrl').value.trim();
   const desc     = document.getElementById('fDescription').value.trim();
 
-  // Collect options
   const rows = document.querySelectorAll('#optionsContainer .option-row');
   const opts = [];
   rows.forEach(row => {
@@ -940,44 +906,25 @@ async function saveProduct() {
 
   try {
     if (isEdit) {
-      /* Update product */
-      await updateDoc(doc(db, "products", productId), {
-        category, image: imageUrl, description: desc
-      });
+      const { error: prodErr } = await supabase.from('products').update({ category, image: imageUrl, description: desc }).eq('id', productId);
+      if (prodErr) throw prodErr;
 
-      /* Fetch and delete old options */
-      const batch = writeBatch(db);
-      const optsSnap = await getDocs(collection(db, "product_options"));
-      optsSnap.docs.forEach(d => {
-        if (d.data().product_id === productId) batch.delete(d.ref);
-      });
-
-      /* Insert new options */
-      opts.forEach(o => {
-        const newOptRef = doc(collection(db, "product_options"));
-        batch.set(newOptRef, { product_id: productId, name: o.name, price: o.price });
-      });
-      await batch.commit();
+      await supabase.from('product_options').delete().eq('product_id', productId);
+      const optsToInsert = opts.map(o => ({ product_id: productId, name: o.name, price: o.price }));
+      await supabase.from('product_options').insert(optsToInsert);
 
       showToast('✅ Ürün güncellendi');
     } else {
-      /* Insert product */
-      const docRef = await addDoc(collection(db, "products"), {
-        category, image: imageUrl, description: desc
-      });
+      const { data: newProd, error: prodErr } = await supabase.from('products').insert([{ category, image: imageUrl, description: desc }]).select().single();
+      if (prodErr) throw prodErr;
 
-      /* Insert options */
-      const batch = writeBatch(db);
-      opts.forEach(o => {
-        const newOptRef = doc(collection(db, "product_options"));
-        batch.set(newOptRef, { product_id: docRef.id, name: o.name, price: o.price });
-      });
-      await batch.commit();
+      const optsToInsert = opts.map(o => ({ product_id: newProd.id, name: o.name, price: o.price }));
+      const { error: insOptsErr } = await supabase.from('product_options').insert(optsToInsert);
+      if (insOptsErr) throw insOptsErr;
 
       showToast('✅ Ürün eklendi');
     }
 
-    /* Reload and re-render */
     await loadData();
     renderMainMenu();
     setupScrollReveal();
@@ -993,18 +940,13 @@ async function saveProduct() {
   }
 }
 
-/* ─── Delete Product ─── */
 async function deleteProduct(productId, name) {
   if (!confirm(`"${name}" adlı ürünü silmek istediğinize emin misiniz?`)) return;
 
   try {
-    const batch = writeBatch(db);
-    const optsSnap = await getDocs(collection(db, "product_options"));
-    optsSnap.docs.forEach(d => {
-      if (d.data().product_id === productId) batch.delete(d.ref);
-    });
-    batch.delete(doc(db, "products", productId));
-    await batch.commit();
+    await supabase.from('product_options').delete().eq('product_id', productId);
+    const { error } = await supabase.from('products').delete().eq('id', productId);
+    if (error) throw error;
 
     showToast('🗑️ Ürün silindi');
     await loadData();
@@ -1018,9 +960,6 @@ async function deleteProduct(productId, name) {
   }
 }
 
-/* ══════════════════════════════════════
-   TOAST
-══════════════════════════════════════ */
 let toastTimer;
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
@@ -1031,29 +970,20 @@ function showToast(msg, isError = false) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-/* ──── Helpers ──── */
 function esc(str) {
-  return String(str || '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-/* Ürün adını belirle: önce product_options, yoksa resim dosya adından üret */
 function nameOf(product) {
   const opts = getOpts(product.id);
   if (opts[0]?.name) return opts[0].name;
-  /* Resim URL'sinden dosya adı çıkar ve formatla */
   if (product.image) {
     const file = product.image.split('/').pop().replace(/\.[^.]+$/, '');
-    /* camelCase / bitişik kelimeleri ayır, baş harf büyüt */
-    return file
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return file.replace(/([a-z])([A-Z])/g, '$1 $2').split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }
   return product.description?.split(' ').slice(0,3).join(' ') || '—';
 }
 
-/* ── Run ── */
 init();
 </script>
 </body>
