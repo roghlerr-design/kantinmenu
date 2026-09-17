@@ -406,7 +406,7 @@ footer{position:relative;z-index:1;text-align:center;padding:28px 20px 40px}
           <span class="img-upload-text">Görsel yüklemek için tıklayın</span>
           <span class="img-upload-sub">JPG, PNG, WebP — Max 10MB</span>
         </div>
-        <div class="img-upload-spinner">⏳ Supabase'e yükleniyor…</div>
+        <div class="img-upload-spinner">⏳ Cloudinary'ye yükleniyor…</div>
       </div>
       <input type="hidden" id="fImageUrl">
     </div>
@@ -449,6 +449,9 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const ADMIN_PASS = 'admin123';
 
 /* ─── State ─── */
+const CLOUDINARY_CLOUD_NAME = "wr0tavzt"; // Buraya kendi Cloud Name'inizi yazın
+const CLOUDINARY_UPLOAD_PRESET = "images"; // Görseldeki oluşturduğunuz preset adı
+
 let products    = [];
 let allOptions  = [];
 let adminCatFilter = 'all';
@@ -838,26 +841,32 @@ async function handleImageUpload(file) {
   area.classList.remove('has-img');
 
   try {
-    const compressed = await compressImage(file);
-    const fileName   = `${Date.now()}.webp`;
-    
-    const { data, error } = await supabase.storage
-      .from('images')
-      .upload(fileName, compressed, { contentType: 'image/webp' });
-      
-    if (error) throw error;
-    
-    const { data: publicUrlData } = supabase.storage
-      .from('images')
-      .getPublicUrl(fileName);
-      
-    currentUploadUrl = publicUrlData.publicUrl;
+    // 1. Resmi tarayıcıda sıkıştır (Mevcut fonksiyonunu kullanıyoruz)
+    const compressedBlob = await compressImage(file);
+
+    // 2. Cloudinary için veriyi hazırla
+    const formData = new FormData();
+    formData.append('file', compressedBlob, `${Date.now()}.webp`);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    // 3. Cloudinary API'sine istek at
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("Cloudinary yükleme hatası");
+
+    const data = await res.json();
+
+    // 4. Dönen URL'i kaydet (Cloudinary'nin otomatik oluşturduğu güvenli bağlantı)
+    currentUploadUrl = data.secure_url;
     document.getElementById('fImageUrl').value = currentUploadUrl;
 
     preview.src = currentUploadUrl;
     area.classList.remove('uploading');
     area.classList.add('has-img');
-    showToast('✅ Görsel yüklendi');
+    showToast('✅ Görsel Cloudinary\'ye yüklendi');
   } catch (err) {
     console.error(err);
     area.classList.remove('uploading', 'has-img');
